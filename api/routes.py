@@ -3364,6 +3364,17 @@ def _handle_llm_wiki_status(handler, parsed) -> bool:
 _MODEL_PRICE_CACHE: dict = {"mtime": None, "map": {}}
 _MODEL_PRICE_LOCK = threading.Lock()
 
+# Built-in DeepSeek prices — USD per 1M tokens: (input, output, cache_read).
+# Lets insights estimate cost even when the external models.dev cache file is
+# absent (e.g. the project is copied to a machine without ~/.hermes). The live
+# cache, when present, overrides these.
+_BUILTIN_PRICES: dict = {
+    "deepseek-v4-flash": (0.17, 0.35, 0.028),
+    "deepseek-v4-pro": (1.73, 3.796, 0.33),
+    "deepseek-reasoner": (0.56, 1.68, 0.07),
+    "deepseek-chat": (0.14, 0.28, 0.028),
+}
+
 
 def _models_dev_cache_path() -> Path:
     try:
@@ -3385,14 +3396,14 @@ def _load_model_price_map() -> dict:
     try:
         mtime = path.stat().st_mtime
     except Exception:
-        return {}
+        return dict(_BUILTIN_PRICES)  # no cache file → built-in DeepSeek prices
     with _MODEL_PRICE_LOCK:
         if _MODEL_PRICE_CACHE["mtime"] == mtime:
             return _MODEL_PRICE_CACHE["map"]
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
     except Exception:
-        return {}
+        return dict(_BUILTIN_PRICES)
     out: dict = {}
 
     def _f(v):
@@ -3417,10 +3428,11 @@ def _load_model_price_map() -> dict:
                 _walk(v)
 
     _walk(data)
+    merged = {**_BUILTIN_PRICES, **out}  # live models.dev cache overrides built-in
     with _MODEL_PRICE_LOCK:
         _MODEL_PRICE_CACHE["mtime"] = mtime
-        _MODEL_PRICE_CACHE["map"] = out
-    return out
+        _MODEL_PRICE_CACHE["map"] = merged
+    return merged
 
 
 def _estimate_cost_from_tokens(model, in_tok, out_tok, cache_read_tok, price_map) -> float:
