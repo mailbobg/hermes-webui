@@ -753,7 +753,7 @@
   .session-search-preview{font-size:11px;line-height:1.35;color:var(--muted);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow-wrap:anywhere;opacity:.9;}
   .session-search-hit-preview{background:var(--accent-bg);color:var(--accent-text);}
   .session-item.active .session-title{color:var(--accent-text);}
-  .session-meta{font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .session-meta{font-size:12px;color:color-mix(in srgb, var(--muted), var(--text) 42%);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .session-item.active .session-search-preview{color:var(--accent-text);opacity:.72;}
   .session-item.active .session-search-hit{background:var(--accent-bg-strong);color:var(--accent-text);}
   .session-item.active .session-meta{color:var(--accent-text);opacity:.8;}
@@ -4734,10 +4734,16 @@ html{ scroll-behavior:smooth; }
 :root[data-skin]{ --accent:#007AFF; --accent-hover:#0071E3; --accent-bg:rgba(0,122,255,.10); --accent-bg-strong:rgba(0,122,255,.18); --accent-text:#0066CC; }
 :root.dark[data-skin]{ --accent:#0A84FF; --accent-hover:#409CFF; --accent-bg:rgba(10,132,255,.18); --accent-bg-strong:rgba(10,132,255,.30); --accent-text:#6BB8FF; }
 
-/* ── User bubble: iMessage tail (asymmetric radius + masked wedge) ── */
-:root .msg-row[data-role="user"] .msg-body{ border-radius:20px 20px 6px 20px; position:relative; }
-:root .msg-row[data-role="user"] .msg-body::before{ content:""; position:absolute; z-index:0; bottom:0; right:-6px; width:15px; height:17px; background:var(--accent); border-bottom-left-radius:15px 13px; }
-:root .msg-row[data-role="user"] .msg-body::after{ content:""; position:absolute; z-index:1; bottom:0; right:-15px; width:16px; height:18px; background:var(--bg); border-bottom-left-radius:12px; }
+/* ── User bubble: iMessage tail (classic two-wedge technique).
+   ::before is a blue wedge poking out of the bottom-right corner; ::after is a
+   wedge filled with the chat background colour that carves the concave hook so
+   it reads as a real iMessage tail. The carving wedge MUST use --sidebar (the
+   actual colour the message area paints, i.e. .main-view), NOT --bg — the old
+   code used --bg, which in light mode is pure white over a grey message area
+   and showed up as a stray white block. --sidebar matches in both light/dark. ── */
+:root .msg-row[data-role="user"] .msg-body{ border-radius:18px; position:relative; }
+:root .msg-row[data-role="user"] .msg-body::before{ content:""; position:absolute; z-index:0; bottom:0; right:-6px; width:16px; height:14px; background:var(--accent); border-bottom-left-radius:14px 12px; }
+:root .msg-row[data-role="user"] .msg-body::after{ content:""; position:absolute; z-index:1; bottom:0; right:-15px; width:15px; height:14px; background:var(--sidebar); border-bottom-left-radius:9px; }
 
 /* ── Assistant: short text segments → soft grey receive bubble; segments with
      rich content (code, tables, media, tool cards) stay clean/full-width. ── */
@@ -4763,6 +4769,7 @@ html{ scroll-behavior:smooth; }
 :root .session-item.active{ background:var(--accent); color:#fff; box-shadow:none; }
 :root .session-item.active .session-title{ color:#fff; font-weight:590; }
 :root .session-item.active .session-time{ color:rgba(255,255,255,.82); }
+:root .session-item.active .session-meta{ color:rgba(255,255,255,.85); }
 :root .session-item.active .session-actions-trigger{ color:#fff; }
 :root .session-item.active .session-state-indicator.is-streaming,
 :root .session-item.active .session-state-indicator.is-unread{ background:#fff; box-shadow:0 0 0 3px rgba(255,255,255,.30); }
