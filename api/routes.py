@@ -3356,6 +3356,94 @@ def _handle_llm_wiki_status(handler, parsed) -> bool:
     return True
 
 
+# ── Model price map (for insights cost fallback) ────────────────────────────
+# Some providers (notably DeepSeek) leave a session's estimated_cost at 0 because
+# the agent gateway didn't price the model. The models.dev cache, however, does
+# carry per-Mtoken `cost` for those models, so we estimate the cost from token
+# counts here. mtime-keyed module cache avoids re-parsing the ~2 MB JSON.
+_MODEL_PRICE_CACHE: dict = {"mtime": None, "map": {}}
+_MODEL_PRICE_LOCK = threading.Lock()
+
+
+def _models_dev_cache_path() -> Path:
+    try:
+        from agent.models_dev import _get_cache_path
+        return _get_cache_path()
+    except Exception:
+        try:
+            from api.config import _DEFAULT_HERMES_HOME
+            return _DEFAULT_HERMES_HOME / "models_dev_cache.json"
+        except Exception:
+            return Path.home() / ".hermes" / "models_dev_cache.json"
+
+
+def _load_model_price_map() -> dict:
+    """Map lowercased model-id -> (input, output, cache_read) USD per 1M tokens,
+    parsed from the models.dev cache. Used to estimate cost for sessions the
+    agent left unpriced (e.g. DeepSeek)."""
+    path = _models_dev_cache_path()
+    try:
+        mtime = path.stat().st_mtime
+    except Exception:
+        return {}
+    with _MODEL_PRICE_LOCK:
+        if _MODEL_PRICE_CACHE["mtime"] == mtime:
+            return _MODEL_PRICE_CACHE["map"]
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+    out: dict = {}
+
+    def _f(v):
+        try:
+            return float(v)
+        except (TypeError, ValueError):
+            return None
+
+    def _walk(o):
+        if isinstance(o, dict):
+            mid = o.get("id")
+            cost = o.get("cost")
+            if isinstance(mid, str) and isinstance(cost, dict):
+                ci, co = _f(cost.get("input")), _f(cost.get("output"))
+                cr = _f(cost.get("cache_read"))
+                if ci is not None and co is not None and (ci > 0 or co > 0):
+                    out.setdefault(mid.strip().lower(), (ci, co, cr))
+            for v in o.values():
+                _walk(v)
+        elif isinstance(o, list):
+            for v in o:
+                _walk(v)
+
+    _walk(data)
+    with _MODEL_PRICE_LOCK:
+        _MODEL_PRICE_CACHE["mtime"] = mtime
+        _MODEL_PRICE_CACHE["map"] = out
+    return out
+
+
+def _estimate_cost_from_tokens(model, in_tok, out_tok, cache_read_tok, price_map) -> float:
+    """Estimate USD cost from token counts × per-Mtoken price. Cached input is
+    billed at the cheaper cache_read rate when available (matters a lot for
+    DeepSeek, whose cache hit-rate is high)."""
+    if not model or (in_tok <= 0 and out_tok <= 0):
+        return 0.0
+    key = str(model).strip().lower()
+    p = price_map.get(key)
+    if not p and "/" in key:
+        p = price_map.get(key.split("/")[-1])
+    if not p:
+        return 0.0
+    in_price, out_price, cache_price = p
+    cache_read_tok = max(0, min(cache_read_tok, in_tok))
+    fresh_in = in_tok - cache_read_tok if (cache_price is not None) else in_tok
+    cost = (fresh_in / 1_000_000.0) * in_price + (out_tok / 1_000_000.0) * out_price
+    if cache_price is not None:
+        cost += (cache_read_tok / 1_000_000.0) * cache_price
+    return cost
+
+
 def _handle_insights(handler, parsed) -> bool:
     """Return usage analytics from local WebUI session data."""
     import collections
@@ -3427,10 +3515,17 @@ def _handle_insights(handler, parsed) -> bool:
     # Activity by hour of day (0-23)
     hod_activity = collections.Counter()
 
+    price_map = _load_model_price_map()
     for s in sessions_data:
         input_tokens = _safe_usage_int(s.get("input_tokens"))
         output_tokens = _safe_usage_int(s.get("output_tokens"))
         cost_value = _safe_cost_float(s.get("estimated_cost"))
+        # Fallback: agent left this session unpriced (e.g. DeepSeek → 0). Estimate
+        # from token counts × the models.dev per-Mtoken price.
+        if cost_value <= 0.0 and (input_tokens or output_tokens):
+            cost_value = _estimate_cost_from_tokens(
+                s.get("model"), input_tokens, output_tokens,
+                _safe_usage_int(s.get("cache_read_tokens")), price_map)
         total_messages += _safe_usage_int(s.get("message_count"))
         total_input_tokens += input_tokens
         total_output_tokens += output_tokens

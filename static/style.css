@@ -1,21 +1,30 @@
+  /* Noto Serif SC — Google's open-source simplified-Chinese serif (思源宋体).
+     unicode-range restricts it to CJK glyphs so Latin/UI text keeps using SF Pro. */
+  @font-face {
+    font-family: "Noto Serif SC";
+    src: url("fonts/NotoSerifSC-Regular.woff2") format("woff2");
+    unicode-range: U+3000-303F, U+3200-33FF, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FE30-FE4F, U+FF00-FFEF;
+    font-weight: 400;
+    font-display: swap;
+  }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   /* ── Light mode (default) — warm gold-tinted palette from Hermes brand ── */
   :root {
-    --bg:#FEFCF7;--sidebar:#FAF7F0;--border:#E0D8C8;--border2:rgba(0,0,0,0.15);
-    --text:#1A1610;--muted:#5C5344;--accent:#B8860B;--blue:#0288A8;--gold:#8B6508;--code-bg:#F5F0E5;
-    --surface:#F3EEE3;--topbar-bg:rgba(250,247,240,.98);--main-bg:rgba(254,252,247,0.5);
-    --focus-ring:rgba(184,134,11,.35);--focus-glow:rgba(184,134,11,.1);
-    --input-bg:rgba(0,0,0,.03);--hover-bg:rgba(0,0,0,.05);
-    --strong:#0F0D08;--em:#5C5344;--code-text:#8b4513;--code-inline-bg:rgba(0,0,0,.06);--pre-text:#1A1610;
-    --accent-hover:#996F08;--accent-bg:rgba(184,134,11,0.08);--accent-bg-strong:rgba(184,134,11,0.15);--accent-text:#8B6508;
-    --error:#C62828;--success:#3D8B40;--warning:#E68A00;--info:#0288A8;
-    --radius-sm:4px;--radius-md:8px;--radius-card:8px;--radius-lg:12px;--radius-pill:999px;
+    --bg:#FFFFFF;--sidebar:#F5F5F7;--border:#E3E3E8;--border2:rgba(0,0,0,0.12);
+    --text:#1D1D1F;--muted:#8E8E93;--accent:#007AFF;--blue:#007AFF;--gold:#007AFF;--code-bg:#F5F5F7;
+    --surface:#FFFFFF;--topbar-bg:rgba(255,255,255,.72);--main-bg:rgba(255,255,255,0.6);
+    --focus-ring:rgba(0,122,255,.35);--focus-glow:rgba(0,122,255,.15);
+    --input-bg:rgba(0,0,0,.02);--hover-bg:rgba(0,0,0,.045);
+    --strong:#000000;--em:#3A3A3C;--code-text:#0066CC;--code-inline-bg:rgba(0,0,0,.05);--pre-text:#1D1D1F;
+    --accent-hover:#0071E3;--accent-bg:rgba(0,122,255,0.10);--accent-bg-strong:rgba(0,122,255,0.18);--accent-text:#0066CC;
+    --error:#FF3B30;--success:#34C759;--warning:#FF9500;--info:#007AFF;
+    --radius-sm:8px;--radius-md:12px;--radius-card:16px;--radius-lg:20px;--radius-pill:999px;
     --space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;
     --font-size-xs:11px;--font-size-sm:12px;--font-size-md:14px;
     --file-tree-toggle-width:10px;
-    --font-ui:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,system-ui,sans-serif;
-    --surface-subtle:rgba(0,0,0,.025);--surface-subtle-hover:rgba(0,0,0,.045);
-    --border-subtle:rgba(0,0,0,.08);--border-muted:rgba(0,0,0,.12);
+    --font-ui:"Noto Serif SC",-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue",Helvetica,Arial,sans-serif;
+    --surface-subtle:rgba(0,0,0,.03);--surface-subtle-hover:rgba(0,0,0,.05);
+    --border-subtle:rgba(0,0,0,.07);--border-muted:rgba(0,0,0,.11);
     font-family:var(--font-ui);font-size:14px;line-height:1.6;
   }
   /* ── Font size modifiers ── */
@@ -84,16 +93,16 @@
   :root[data-font-size="xlarge"] { font-size: 18px; }
   /* ── Dark mode — navy-black + gold accent matching Hermes terminal ── */
   :root.dark {
-    --bg:#0D0D1A;--sidebar:#141425;--border:#2A2A45;--border2:rgba(255,255,255,0.14);
-    --text:#FFF8DC;--muted:#C0C0C0;--accent:#FFD700;--blue:#4DD0E1;--gold:#FFBF00;--code-bg:#1A1A2E;
-    --surface:#1A1A2E;--topbar-bg:rgba(20,20,37,.98);--main-bg:rgba(13,13,26,0.5);
-    --focus-ring:rgba(255,215,0,.35);--focus-glow:rgba(255,215,0,.08);
-    --input-bg:rgba(255,255,255,.04);--hover-bg:rgba(255,255,255,.06);
-    --strong:#fff;--em:#C0C0C0;--code-text:#f0c27f;--code-inline-bg:rgba(0,0,0,.35);--pre-text:#e2e8f0;
-    --accent-hover:#FFBF00;--accent-bg:rgba(255,215,0,0.08);--accent-bg-strong:rgba(255,215,0,0.15);--accent-text:#FFD700;
-    --error:#EF5350;--success:#4CAF50;--warning:#FFA726;--info:#4DD0E1;
-    --surface-subtle:rgba(255,255,255,.025);--surface-subtle-hover:rgba(255,255,255,.045);
-    --border-subtle:rgba(255,255,255,.075);--border-muted:rgba(255,255,255,.12);
+    --bg:#000000;--sidebar:#1C1C1E;--border:#38383A;--border2:rgba(255,255,255,0.16);
+    --text:#F5F5F7;--muted:#98989D;--accent:#0A84FF;--blue:#0A84FF;--gold:#0A84FF;--code-bg:#1C1C1E;
+    --surface:#1C1C1E;--topbar-bg:rgba(0,0,0,.72);--main-bg:rgba(0,0,0,0.6);
+    --focus-ring:rgba(10,132,255,.45);--focus-glow:rgba(10,132,255,.20);
+    --input-bg:rgba(255,255,255,.06);--hover-bg:rgba(255,255,255,.08);
+    --strong:#fff;--em:#D1D1D6;--code-text:#6BB8FF;--code-inline-bg:rgba(255,255,255,.10);--pre-text:#F5F5F7;
+    --accent-hover:#409CFF;--accent-bg:rgba(10,132,255,0.18);--accent-bg-strong:rgba(10,132,255,0.30);--accent-text:#6BB8FF;
+    --error:#FF453A;--success:#30D158;--warning:#FF9F0A;--info:#0A84FF;
+    --surface-subtle:rgba(255,255,255,.04);--surface-subtle-hover:rgba(255,255,255,.07);
+    --border-subtle:rgba(255,255,255,.09);--border-muted:rgba(255,255,255,.14);
   }
   /* ── Skin: Default (gold — matches base) ── */
   /* No overrides needed — :root and .dark already use gold accent */
@@ -4548,3 +4557,428 @@ main.main.showing-logs > #mainLogs{display:flex;}
 @media (min-width:1600px) {
   .composer-box{max-width:1600px;margin:0 auto;}
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   MODERN MINIMAL REDESIGN — Linear/Vercel direction
+   Appended last so it layers over the base component rules. Colors come from
+   CSS variables only, so it adapts to light/dark AND to every skin (slate,
+   sienna, poseidon …) while upgrading form, spacing, hierarchy & motion.
+   Remove this whole block to revert the redesign with zero functional impact.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* — Global rendering polish — */
+:root body{ -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; letter-spacing:-0.006em; }
+html{ scroll-behavior:smooth; }
+::selection{ background:var(--accent-bg-strong); color:var(--text); }
+
+/* — Scrollbars: token-driven (the base thumb was hard-coded white → invisible
+     in light mode), thin, fully rounded, with a transparent gutter — */
+::-webkit-scrollbar{ width:10px; height:10px; }
+::-webkit-scrollbar-track{ background:transparent; }
+::-webkit-scrollbar-thumb{ background:var(--border-muted); border-radius:999px; border:2px solid transparent; background-clip:padding-box; }
+::-webkit-scrollbar-thumb:hover{ background:var(--border2); border:2px solid transparent; background-clip:padding-box; }
+:root{ scrollbar-width:thin; scrollbar-color:var(--border-muted) transparent; }
+
+/* — Typography hierarchy: tighter tracking & weight on headings, balanced wrap — */
+:root .msg-body{ text-wrap:pretty; }
+:root .msg-body h1,:root .msg-body h2,:root .msg-body h3,:root .msg-body h4{ letter-spacing:-0.02em; line-height:1.3; font-weight:640; }
+:root .msg-body h1{ letter-spacing:-0.03em; line-height:1.2; }
+
+/* — Primary action: solid accent button with press feedback — */
+:root .new-chat-btn{ background:var(--accent); border:1px solid var(--accent); color:#fff; font-weight:600; box-shadow:0 1px 2px rgba(0,0,0,.07); transition:background .15s, border-color .15s, transform .08s, box-shadow .15s; }
+:root .new-chat-btn:hover{ background:var(--accent-hover); border-color:var(--accent-hover); box-shadow:0 2px 6px var(--accent-bg-strong); }
+:root .new-chat-btn:active{ transform:translateY(1px); box-shadow:0 1px 2px rgba(0,0,0,.07); }
+
+/* — Sidebar session items: calmer idle, crisp active with an accent rail — */
+:root .session-list{ padding:0 10px 10px; }
+:root .session-item{ border-radius:9px; padding:9px 10px; }
+:root .session-item.active{ background:var(--accent-bg); color:var(--accent-text); font-weight:550; box-shadow:inset 2px 0 0 var(--accent); }
+:root .session-item:active{ transform:translateY(1px); }
+
+/* — Tool cards: lighter chrome, soft tinted elevation on hover — */
+:root .tool-card{ border:1px solid var(--border-subtle); border-left:2px solid var(--border-muted); border-radius:10px; box-shadow:0 1px 2px rgba(0,0,0,.03); }
+:root .tool-card:hover{ border-color:var(--border-muted); box-shadow:0 3px 8px rgba(0,0,0,.05); }
+
+/* — Composer: precise focus ring + soft elevation — */
+:root .composer-box{ border-radius:14px; box-shadow:0 1px 3px rgba(0,0,0,.05); transition:border-color .18s, box-shadow .18s; }
+:root .composer-box:focus-within{ border-color:var(--accent); box-shadow:0 0 0 3px var(--focus-glow), 0 1px 3px rgba(0,0,0,.05); }
+
+/* — Topbar: refined glass — */
+:root .topbar{ backdrop-filter:saturate(180%) blur(16px); -webkit-backdrop-filter:saturate(180%) blur(16px); }
+
+/* — Message rhythm: a touch more air between turns, softer user bubble — */
+:root .msg-row{ padding:14px 0; }
+:root .messages-inner{ padding:24px 28px 40px; }
+:root .msg-row[data-role="user"] .msg-body{ border-radius:14px; }
+
+/* — Inline code: subtle pill — */
+:root .msg-body code{ border-radius:5px; }
+
+/* — Keyboard focus: subtle inset ring only (no detached dark-blue outline that
+     looked like a hard border around clicked buttons). — */
+:root button:focus-visible,:root a:focus-visible,:root [role="button"]:focus-visible{ outline:none; box-shadow:0 0 0 3px var(--accent-bg); }
+:root .rail-btn:focus-visible,:root .rail-btn:focus,:root .session-item:focus-visible,:root .session-item:focus{ outline:none; box-shadow:none; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   NAVIGATION REDESIGN — labeled left rail + refined middle column
+   The left rail was a 48px icon-only strip. Expand it into a real labeled nav
+   (icon + name) by repurposing each button's existing i18n `data-tooltip`
+   (e.g. "聊天") — rendered via the .has-tooltip ::after — into a permanent
+   inline label. Collapses back to icons under 981px to protect the chat area.
+   ═══════════════════════════════════════════════════════════════════════════ */
+@media(min-width:981px){
+  nav.rail{ width:208px; align-items:stretch; gap:1px; padding:10px; }
+  nav.rail .rail-btn,
+  nav.rail .nav-tab{ width:100%; height:38px; justify-content:flex-start; gap:11px; padding:0 11px; border-radius:8px; font-size:13px; font-weight:500; overflow:hidden; }
+  nav.rail .rail-btn > svg{ flex:0 0 20px; }
+
+  /* Turn the hover tooltip into an always-visible inline label */
+  nav.rail .rail-btn.has-tooltip::after{
+    content:attr(data-tooltip);
+    position:static; transform:none; opacity:1; inset:auto;
+    background:none; border:none; box-shadow:none; color:inherit;
+    font:inherit; letter-spacing:normal; padding:0; margin:0;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    transition:none; z-index:auto; flex:1 1 auto; text-align:left;
+  }
+
+  /* Active state: inset accent rail instead of the off-canvas -6px bar */
+  nav.rail .rail-btn.active::before,
+  nav.rail .nav-tab.active::before{ display:none; }
+  nav.rail .rail-btn.active,
+  nav.rail .nav-tab.active{ box-shadow:inset 2px 0 0 var(--accent); }
+  nav.rail .rail-spacer{ flex:1; }
+
+  /* Middle column: slightly narrower to balance the now-wider rail */
+  aside.sidebar{ width:280px; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   MIDDLE COLUMN REDESIGN — session sidebar
+   Header title gains presence, "new conversation" becomes a solid accent
+   primary action, filter chips become a crisp segmented control, search &
+   list rhythm refined. Colors via tokens → works across every skin.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Header: a real title + a solid primary "new chat" action */
+.panel-head{ padding:14px 12px 11px; min-height:48px; letter-spacing:normal; }
+.panel-head > span{ font-size:14px; font-weight:650; color:var(--text); letter-spacing:-0.01em; }
+#btnNewChat.panel-head-btn{ width:28px; height:28px; background:var(--accent); color:#fff; border-radius:8px; box-shadow:0 1px 2px rgba(0,0,0,.10); }
+#btnNewChat.panel-head-btn:hover{ background:var(--accent-hover); color:#fff; }
+#btnNewChat.panel-head-btn svg{ width:16px; height:16px; }
+
+/* Search: aligned to the new radius/spacing language */
+.sidebar-search{ padding:10px 12px 8px; }
+.sidebar-search input{ border-radius:9px; padding-top:8px; padding-bottom:8px; }
+
+/* Filter chips → tidy segmented control (squarer, a touch larger, more air) */
+.project-bar{ gap:6px; padding:2px 12px 12px; border-bottom:1px solid var(--border-subtle); margin-bottom:6px; }
+.project-chip{ font-size:11px; padding:4px 10px; border-radius:7px; }
+.project-create-btn{ border-radius:7px; padding:4px 8px; }
+
+/* Session list rhythm + clearer titles */
+.session-list{ padding:2px 10px 12px; }
+:root .session-title{ font-size:13px; line-height:1.45; }
+:root .session-item{ margin-bottom:1px; }
+:root .session-item.active .session-title{ font-weight:600; }
+/* Streaming/unread dot: make the live state read more clearly */
+.session-state-indicator.is-streaming,.session-state-indicator.is-unread{ width:7px; height:7px; border-radius:999px; background:var(--accent); color:transparent; box-shadow:0 0 0 3px var(--accent-bg); }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   APPLE iMESSAGE AESTHETIC
+   SF Pro + iOS system blue (#007AFF / dark #0A84FF). Rounded blue send bubbles,
+   soft grey receive bubbles, pill composer with a circular blue send button,
+   frosted nav. Colors via tokens so it tracks light/dark. Layered last to
+   override the earlier minimal pass where they differ.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* — User message: iMessage blue bubble, right-aligned, white text — */
+:root .msg-row[data-role="user"] .msg-body{
+  background:var(--accent); color:#fff; border:none;
+  border-radius:20px; padding:8px 15px; box-shadow:none;
+  max-width:76%; font-size:14px; line-height:1.45; letter-spacing:-0.01em;
+}
+:root .msg-row[data-role="user"] .msg-body code{ color:#fff; background:rgba(255,255,255,.20); }
+:root .msg-row[data-role="user"] .msg-body a{ color:#fff; text-decoration:underline; }
+:root .msg-row[data-role="user"] .msg-foot{ justify-content:flex-end; }
+
+/* — Assistant message: round avatar + clean text (long markdown reads better
+     without a bubble; the blue user bubble carries the iMessage signature) — */
+:root .msg-row .role-icon.assistant{ border-radius:50%; width:24px; height:24px; }
+:root .msg-row[data-role="assistant"] .msg-body{ font-size:14px; line-height:1.6; }
+
+/* — Welcome suggestion cards & misc surfaces: softer iMessage roundness — */
+:root .tool-card{ border-radius:14px; }
+:root .composer-box{ border-radius:22px; box-shadow:0 1px 4px rgba(0,0,0,.06); }
+:root .composer-box:focus-within{ border-color:var(--accent); box-shadow:0 0 0 3px var(--focus-glow); }
+
+/* — Composer send button: circular iOS-blue with white glyph — */
+:root #btnSend.send-btn{ background:var(--accent); color:#fff; border:none; border-radius:50%; box-shadow:0 1px 3px rgba(0,0,0,.18); transition:background .15s, transform .08s; }
+:root #btnSend.send-btn:hover:not(:disabled){ background:var(--accent-hover); }
+:root #btnSend.send-btn:active:not(:disabled){ transform:scale(.92); }
+:root #btnSend.send-btn:disabled{ background:var(--surface-subtle); color:var(--muted); box-shadow:none; }
+
+/* — New-chat primary action stays iOS-blue & pill-round — */
+:root #btnNewChat.panel-head-btn{ border-radius:8px; }
+:root .new-chat-btn{ border-radius:12px; }
+
+/* — Topbar: centered title, no divider, deep frost (iMessage conversation header) — */
+:root .topbar{ border-bottom:none; backdrop-filter:saturate(180%) blur(20px); -webkit-backdrop-filter:saturate(180%) blur(20px); }
+
+/* — Session list active row: iMessage selected-blue treatment — */
+:root .session-item.active{ background:var(--accent-bg); }
+
+/* ── Force iMessage system-blue regardless of the selected skin, so the look
+     applies without the user having to switch skins (skin pref lives in
+     localStorage and overrides --accent otherwise). ── */
+:root[data-skin]{ --accent:#007AFF; --accent-hover:#0071E3; --accent-bg:rgba(0,122,255,.10); --accent-bg-strong:rgba(0,122,255,.18); --accent-text:#0066CC; }
+:root.dark[data-skin]{ --accent:#0A84FF; --accent-hover:#409CFF; --accent-bg:rgba(10,132,255,.18); --accent-bg-strong:rgba(10,132,255,.30); --accent-text:#6BB8FF; }
+
+/* ── User bubble: iMessage tail (asymmetric radius + masked wedge) ── */
+:root .msg-row[data-role="user"] .msg-body{ border-radius:20px 20px 6px 20px; position:relative; }
+:root .msg-row[data-role="user"] .msg-body::before{ content:""; position:absolute; z-index:0; bottom:0; right:-6px; width:15px; height:17px; background:var(--accent); border-bottom-left-radius:15px 13px; }
+:root .msg-row[data-role="user"] .msg-body::after{ content:""; position:absolute; z-index:1; bottom:0; right:-15px; width:16px; height:18px; background:var(--bg); border-bottom-left-radius:12px; }
+
+/* ── Assistant: short text segments → soft grey receive bubble; segments with
+     rich content (code, tables, media, tool cards) stay clean/full-width. ── */
+:root .assistant-segment > .msg-body{ background:var(--surface-subtle); border-radius:18px 18px 18px 6px; padding:9px 14px; display:inline-block; max-width:80%; }
+:root .assistant-segment > .msg-body:has(pre),
+:root .assistant-segment > .msg-body:has(table),
+:root .assistant-segment > .msg-body:has(img),
+:root .assistant-segment > .msg-body:has(.tool-card){ background:none; border-radius:0; padding:0; padding-left:30px; display:block; max-width:none; }
+:root .assistant-segment > .msg-body > p:last-child{ margin-bottom:0; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   APPLE-STYLE SIDEBAR (macOS Messages / iOS Settings list language)
+   Selected row → solid blue rounded fill with white text; roomier rows; plain
+   sentence-case group headers; calmer search. Tokens keep it light/dark aware.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Roomier, rounded rows with vertically-centered single-line titles */
+:root .session-list{ padding:4px 10px 12px; }
+:root .session-item{ padding:9px 11px; border-radius:9px; min-height:42px; align-items:center; margin-bottom:1px; }
+:root .session-title{ font-size:13.5px; font-weight:450; }
+
+/* Selected row: macOS Messages solid-blue fill, everything inside turns white */
+:root .session-item.active{ background:var(--accent); color:#fff; box-shadow:none; }
+:root .session-item.active .session-title{ color:#fff; font-weight:590; }
+:root .session-item.active .session-time{ color:rgba(255,255,255,.82); }
+:root .session-item.active .session-actions-trigger{ color:#fff; }
+:root .session-item.active .session-state-indicator.is-streaming,
+:root .session-item.active .session-state-indicator.is-unread{ background:#fff; box-shadow:0 0 0 3px rgba(255,255,255,.30); }
+:root .session-item.active:hover{ background:var(--accent-hover); color:#fff; }
+
+/* Group header: drop the cramped all-caps micro-label for a plain Apple title */
+:root .session-date-header{ font-size:12px; font-weight:600; text-transform:none; letter-spacing:-0.01em; color:var(--muted); opacity:1; padding:12px 10px 5px; }
+:root .session-date-caret{ font-size:10px; }
+
+/* Search: iOS rounded grey field */
+:root .session-search.sidebar-search input,
+:root:not(.dark) .session-search.sidebar-search input{ background:var(--surface-subtle); border:1px solid transparent; border-radius:10px; }
+:root .session-search.sidebar-search input:focus,
+:root:not(.dark) .session-search.sidebar-search input:focus{ background:var(--surface-subtle); border-color:transparent; box-shadow:0 0 0 3px var(--accent-bg); }
+
+/* Filter chips: iOS-style soft segmented control */
+:root .project-bar{ border-bottom:1px solid var(--border-subtle); padding-bottom:11px; }
+:root .project-chip{ border:1px solid transparent; }
+:root .project-chip.active{ background:var(--accent); color:#fff; border-color:var(--accent); }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   APPLE-STYLE FORM CONTROLS & BUTTONS — Kanban panel (and shared checkboxes)
+   Replaces the cramped grey-bordered selects/buttons with iOS rounded fields,
+   soft-fill buttons, a solid-blue primary action, and accent checkboxes.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Dropdowns → iOS rounded grey fields */
+:root .kanban-filter-stack select,
+:root .kanban-bulk-bar select{
+  background:var(--surface-subtle); border:1px solid transparent;
+  border-radius:9px; padding:8px 28px 8px 12px; font-size:13px; min-height:36px;
+}
+:root .kanban-filter-stack select:hover,
+:root .kanban-bulk-bar select:hover{ background:var(--surface-subtle-hover); }
+:root .kanban-filter-stack select:focus,
+:root .kanban-bulk-bar select:focus{ border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-bg); outline:none; }
+:root .kanban-filter-stack{ gap:9px; padding:10px 12px; }
+
+/* Buttons → Apple soft-fill; .primary = solid iOS blue */
+:root .kanban-pane .btn,
+:root .kanban-bulk-bar .btn,
+:root .kanban-new-task-row .btn,
+:root .kanban-task-preview .btn,
+:root .kanban-comment-form .btn,
+:root .kanban-modal .btn{
+  background:var(--surface-subtle); border:1px solid transparent;
+  border-radius:9px; padding:7px 14px; font-size:13px; font-weight:500; color:var(--text);
+}
+:root .kanban-pane .btn:hover,
+:root .kanban-bulk-bar .btn:hover,
+:root .kanban-new-task-row .btn:hover,
+:root .kanban-task-preview .btn:hover,
+:root .kanban-comment-form .btn:hover,
+:root .kanban-modal .btn:hover{ background:var(--surface-subtle-hover); border-color:transparent; color:var(--text); }
+:root .kanban-pane .btn.primary,
+:root .kanban-new-task-row .btn.primary,
+:root .kanban-modal .btn.primary{
+  background:var(--accent); border-color:var(--accent); color:#fff; font-weight:600;
+}
+:root .kanban-pane .btn.primary:hover,
+:root .kanban-new-task-row .btn.primary:hover,
+:root .kanban-modal .btn.primary:hover{ background:var(--accent-hover); border-color:var(--accent-hover); color:#fff; }
+
+/* New-task input → iOS rounded field */
+:root .kanban-new-task-row input{ background:var(--surface-subtle); border:1px solid transparent; border-radius:9px; padding:8px 11px; font-size:13px; min-height:36px; }
+:root .kanban-new-task-row input:focus{ border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-bg); outline:none; }
+
+/* Stat pills → Apple soft capsules */
+:root .kanban-stat-cell{ background:var(--surface-subtle); border:1px solid transparent; border-radius:8px; padding:3px 9px; font-size:12px; }
+
+/* Checkboxes everywhere → iOS accent tint, larger hit area */
+:root input[type="checkbox"]{ accent-color:var(--accent); width:15px; height:15px; }
+
+/* Empty state → calmer Apple card instead of a hard dashed box */
+:root .kanban-empty{ border:1px solid var(--border-subtle); border-radius:12px; background:var(--surface-subtle); color:var(--muted); }
+
+/* ── Unify right-pane background WITH the two left columns: the rail and the
+   sidebar both use --sidebar, so paint the main content area --sidebar too.
+   Covers chat (transparent .messages over .main) and every other panel's
+   .main-view, so the whole window shares one continuous surface colour. ── */
+:root .main{ background:var(--sidebar); }
+:root .main-view,
+:root .kanban-board-wrap{ background:var(--sidebar); }
+
+/* Remove the divider line under the top app titlebar so it blends into the
+   now-unified --sidebar surface across all three columns. */
+:root .app-titlebar{ border-bottom:none; }
+
+/* ── Confine the top titlebar to the RIGHT content area only (Slack/Discord
+   layout): the rail + sidebar rise to the very top of the window, and the
+   titlebar floats over just the main pane. Desktop widths only — mobile keeps
+   the full-width bar so the hamburger stays reachable. rail(208)+sidebar(280). ── */
+@media(min-width:981px){
+  body{ position:relative; }
+  :root .app-titlebar{
+    position:absolute; top:0; right:0; left:auto;
+    width:calc(100% - 488px);
+    box-sizing:border-box;
+    z-index:25;
+  }
+  :root .main{ padding-top:38px; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   APPLE COMPONENTS ACROSS ALL SIDE PANELS
+   (skills, memory, workspaces, profiles, insights, logs, tasks …)
+   Unifies dropdowns, group labels, toggles, list rows and cards to the same
+   iOS language already used by chat & kanban. Tokens keep it light/dark aware.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Dropdowns in every panel → iOS rounded grey field */
+:root .panel-view select,
+:root .logs-control-panel select{
+  background:var(--surface-subtle); border:1px solid transparent; border-radius:9px;
+  padding:8px 12px; font-size:13px; min-height:36px; color:var(--text);
+}
+:root .panel-view select:hover,
+:root .logs-control-panel select:hover{ background:var(--surface-subtle-hover); }
+:root .panel-view select:focus,
+:root .logs-control-panel select:focus{ border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-bg); outline:none; }
+
+/* Uppercase micro group labels → plain Apple sentence-case titles */
+:root .skills-cat-header,
+:root .logs-control-label{ text-transform:none; letter-spacing:-0.01em; font-size:12px; font-weight:600; }
+
+/* Skills toggle → proper iOS switch: blue track when on, WHITE knob in both
+   states (base used accent-text dark-blue knob, invisible on the solid-blue
+   track). Slightly larger track + shadowed knob for an iOS feel. */
+:root .skill-toggle{ width:34px; height:18px; border-radius:999px; background:var(--border2); border:none; }
+:root .skill-toggle.enabled{ background:var(--accent); border:none; }
+:root .skill-toggle::after{ width:14px; height:14px; top:2px; left:2px; background:#fff; box-shadow:0 1px 2px rgba(0,0,0,.25); }
+:root .skill-toggle.enabled::after{ background:#fff; transform:translateX(16px); }
+
+/* List rows (skills / workspaces / memory / profiles) → Apple hover + radius */
+:root .skill-item{ border-radius:9px; padding:9px 10px; }
+:root .skill-item:hover{ background:var(--hover-bg); }
+:root .ws-row{ border-radius:9px; }
+:root .ws-row:hover{ background:var(--hover-bg); }
+:root .side-menu-item{ border-radius:9px; }
+:root .side-menu-item:hover{ background:var(--hover-bg); }
+:root .profile-card{ border-radius:10px; padding:10px 12px; }
+:root .profile-card:hover{ background:var(--hover-bg); }
+:root .profile-card.is-active{ background:var(--accent-bg); }
+
+/* Info/help card → soft Apple card */
+:root .profile-help-card{ background:var(--surface-subtle); border:1px solid var(--border-subtle); border-radius:12px; padding:12px 14px; }
+:root .logs-control-panel{ gap:10px; padding:12px; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   RAIL MENU ITEM — clean unified blue hover/active (FIX)
+   The labelled rail re-used the tooltip ::after; a light-mode tooltip rule
+   (:root:not(.dark) .nav-tab:hover::after, specificity 0,4,1) re-painted it
+   WHITE on hover (the "white pill"). Beat it, drop the dark focus ring and the
+   left inset bar, and give hover+active one consistent iOS-blue tint. ═══ */
+@media(min-width:981px){
+  /* hover & active share one clean light-blue fill, blue label */
+  :root nav.rail .rail-btn:hover,
+  :root nav.rail .rail-btn.nav-tab:hover{ background:var(--accent-bg); color:var(--accent-text); }
+  :root nav.rail .rail-btn.active,
+  :root nav.rail .rail-btn.nav-tab.active{ background:var(--accent-bg); color:var(--accent-text); box-shadow:none; }
+
+  /* never let the label pill paint a background/border/shadow — beats line 638 */
+  :root nav.rail .rail-btn.has-tooltip::after,
+  :root nav.rail .rail-btn.has-tooltip:hover::after,
+  :root:not(.dark) nav.rail .rail-btn.nav-tab.has-tooltip:hover::after,
+  :root:not(.dark) nav.rail .rail-btn.nav-tab:hover::after{
+    background:none; border:none; box-shadow:none; color:inherit;
+    position:static; opacity:1; transform:none; padding:0;
+  }
+
+  /* drop the dark-blue focus ring and the left inset accent bar on rail items */
+  :root nav.rail .rail-btn:focus-visible,
+  :root nav.rail .rail-btn:focus{ outline:none; box-shadow:none; }
+  :root nav.rail .rail-btn.active::before,
+  :root nav.rail .nav-tab.active::before{ display:none; }
+}
+
+/* ── Floating tooltips → soft Apple bubble. The base tooltip used a heavy dark
+   drop-shadow + dark inset border tuned for the old dark theme, which looked
+   harsh/dark on the light iMessage surface. Soften it everywhere (rail labels
+   are overridden above and unaffected). ── */
+:root .has-tooltip::after{
+  background:var(--surface); color:var(--text);
+  border:1px solid var(--border-subtle);
+  box-shadow:0 6px 20px rgba(0,0,0,.16);
+  border-radius:8px; font-weight:500; letter-spacing:normal;
+}
+:root.dark .has-tooltip::after{ box-shadow:0 8px 24px rgba(0,0,0,.5); }
+
+/* ── Active (blue-filled) session row → force WHITE title over the blue. The
+   light-mode rule (style.css:554, :root:not(.dark) .session-item.active
+   .session-title, specificity 0,4,1) painted it dark-blue accent-text, which
+   was nearly invisible on the blue fill. Beat it for every state. ── */
+:root:not(.dark) .session-item.active .session-title,
+:root .session-item.active .session-title,
+:root .session-item.active:hover .session-title,
+:root .session-item.active.streaming .session-title{ color:#fff; }
+:root:not(.dark) .session-item.active .session-time,
+:root .session-item.active .session-time{ color:rgba(255,255,255,.85); }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   DEFINITIVE ACTIVE SESSION-ROW STATES — beats the light-only rule at
+   style.css:562 (:root:not(.dark) .session-item.active, specificity 0,4,0).
+   Resting = solid iOS-blue + white text. Hover = plain grey + dark text
+   (same as a normal hovered row, per request). Hover selectors carry an extra
+   :hover class (0,5,0) so they always win over the resting rule (0,4,0). ═══ */
+:root:not(.dark) .session-item.active,
+:root .session-item.active{ background:var(--accent); color:#fff; box-shadow:none; }
+:root:not(.dark) .session-item.active .session-title,
+:root .session-item.active .session-title{ color:#fff; }
+:root .session-item.active .session-time{ color:rgba(255,255,255,.85); }
+:root .session-item.active .session-actions-trigger{ color:#fff; }
+
+:root:not(.dark) .session-item.active:hover,
+:root .session-item.active:hover{ background:var(--hover-bg); color:var(--text); box-shadow:none; }
+:root:not(.dark) .session-item.active:hover .session-title,
+:root .session-item.active:hover .session-title{ color:var(--text); }
+:root .session-item.active:hover .session-time{ color:var(--muted); }
+:root .session-item.active:hover .session-actions-trigger{ color:var(--muted); }

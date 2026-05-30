@@ -1313,7 +1313,7 @@ async function _ensureMessagesLoaded(sid) {
   if (!data || !data.session) return;
   _messagesTruncated = !!data.session._messages_truncated;
   _oldestIdx = data.session._messages_offset || 0;
-  const msgs = (data.session.messages || []).filter(m => m && m.role);
+  let msgs = (data.session.messages || []).filter(m => m && m.role);
   // Check for tool-call metadata on messages (for tool-call card rendering)
   const hasMessageToolMetadata = msgs.some(m => {
     if (!m || m.role !== 'assistant') return false;
