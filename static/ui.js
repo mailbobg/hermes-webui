@@ -8477,10 +8477,10 @@ function _renderTreeItems(container, entries, depth){
     // Name
     const nameEl=document.createElement('span');
     nameEl.className='file-name';nameEl.textContent=item.name;
-    // Tooltip only on FILES — dblclick renames them. On directories, dblclick
-    // navigates into the folder; rename lives in the right-click context menu
-    // (the "Double-click to rename" hint here would be misleading). #1710.
-    if(item.type!=='dir')nameEl.title=t('double_click_rename');
+    // Single-click previews (debounced); double-click opens the file with the
+    // local default app. Rename lives in the right-click menu. On directories,
+    // double-click navigates into the folder.
+    if(item.type!=='dir')nameEl.title=t('double_click_open')||'Double-click to open with default app';
     // Single-click opens (file) or expand-toggles (dir) but is debounced 300ms so a
     // double-click can cancel it and trigger rename instead. Without the debounce, the
     // click bubbles to el.onclick before dblclick can fire — that's #1698. Without the
@@ -8500,6 +8500,8 @@ function _renderTreeItems(container, entries, depth){
       if(_nameClickTimer){clearTimeout(_nameClickTimer);_nameClickTimer=null;}
       // For directories, double-click navigates (breadcrumb view)
       if(item.type==='dir'){loadDir(item.path);return;}
+      // For files, double-click opens with the OS default app (new window).
+      if(typeof openFileNative==='function'){ openFileNative(item.path); return; }
       const inp=document.createElement('input');
       inp.className='file-rename-input';inp.value=item.name;
       inp.onclick=(e2)=>e2.stopPropagation();
