@@ -1614,26 +1614,13 @@ function renderModelDropdown(){
       configuredHeading.className='model-group';
       configuredHeading.textContent=t('model_group_configured')||'Configured';
       dd.appendChild(configuredHeading);
-      // 为了显示原始ID，建立 badgeKeyMap: badge对象->原始key
-      const badgeKeyMap = new Map();
-      for(const [k, v] of Object.entries(_badgeMap)){
-        badgeKeyMap.set(v, k);
-      }
       for(const m of configuredModels){
         const row=document.createElement('div');
         row.className='model-opt'+(m.value===sel.value?' active':'');
-        let badgeLabel = '';
-        let modelName = m.name;
-        if (m.badge) {
-          // 直接用badge的原始key（即config.yaml里的ID）
-          const rawId = badgeKeyMap.get(m.badge) || m.value || m.badge.label || 'Configured';
-          badgeLabel = rawId;
-          modelName = rawId; // model-opt-name直接用原始ID
-          if(m.badge.provider){
-            const providerName=m.badge.provider.replace(/^custom:/,'').split('/')[0];
-            badgeLabel += ` (${providerName})`;
-          }
-        }
+        // Show the friendly model name + a clean role badge ("Primary" / "Fallback N").
+        // The raw config id stays visible in the .model-opt-id subtext below.
+        const modelName = m.name;
+        const badgeLabel = m.badge ? (m.badge.label || 'Configured') : '';
         const badgeHtml=m.badge?`<span class="model-opt-badge model-opt-badge--${esc(m.badge.role||'configured')}">${esc(badgeLabel)}</span>`:'';
         row.innerHTML=`<div class="model-opt-top"><span class="model-opt-name">${esc(modelName)}</span>${badgeHtml}</div><span class="model-opt-id">${esc(m.id)}</span>`;
         row.onclick=()=>selectModelFromDropdown(m.value,(m.badge&&m.badge.provider)||m.providerId||null);

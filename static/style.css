@@ -5213,3 +5213,7 @@ html{ scroll-behavior:smooth; }
 :root .session-item.active:hover .session-title{ color:var(--text); }
 :root .session-item.active:hover .session-time{ color:var(--muted); }
 :root .session-item.active:hover .session-actions-trigger{ color:var(--muted); }
+
+/* User preference: non-active session rows get a blue hover tint, not grey. */
+:root .session-item:not(.active):hover,
+:root:not(.dark) .session-item:not(.active):hover{ background:var(--accent-bg-strong); color:var(--text); }
