@@ -8047,8 +8047,13 @@ def _parse_range_header(range_header: str, file_size: int) -> tuple[int, int] | 
         return None
 
 
-def _serve_file_bytes(handler, target: Path, mime: str, disposition: str, cache_control: str, *, csp: str | None = None):
-    """Serve a file with correct MIME/disposition and optional byte-range support."""
+def _serve_file_bytes(handler, target: Path, mime: str, disposition: str, cache_control: str, *, csp: str | None = None, frameable: bool = False):
+    """Serve a file with correct MIME/disposition and optional byte-range support.
+
+    ``frameable=True`` omits the X-Frame-Options: DENY header (sent by
+    _security_headers) so the response can load inside a same-origin workspace
+    preview iframe — used for inline PDF preview, which is otherwise blocked.
+    """
     try:
         file_size = target.stat().st_size
     except PermissionError:
@@ -8086,6 +8091,13 @@ def _serve_file_bytes(handler, target: Path, mime: str, disposition: str, cache_
             "Permissions-Policy",
             "camera=(), microphone=(self), geolocation=(), clipboard-write=(self)",
         )
+    elif frameable:
+        # Same-origin iframe preview (PDF): keep the standard security headers
+        # but DROP X-Frame-Options: DENY so the workspace preview iframe can load
+        # it. The file is served with its real MIME (e.g. application/pdf) and a
+        # nosniff guard, and only same-origin framing is implied.
+        handler.send_header("X-Content-Type-Options", "nosniff")
+        handler.send_header("Referrer-Policy", "same-origin")
     else:
         _security_headers(handler)
     handler.end_headers()
@@ -8708,10 +8720,15 @@ def _handle_file_raw(handler, parsed):
     # allow-same-origin, the document is treated as a unique opaque origin and
     # cannot read WebUI cookies, localStorage, or postMessage to the parent.
     csp = "sandbox allow-scripts allow-popups allow-popups-to-escape-sandbox" if html_inline_ok else None
+    # PDF served inline must be frameable (no X-Frame-Options: DENY) so the
+    # workspace preview iframe can display it. PDFs are rendered by the browser's
+    # built-in viewer and don't execute page scripts, so same-origin framing is
+    # safe here.
+    pdf_inline_ok = inline_preview and mime == "application/pdf"
     # _serve_file_bytes sends Content-Security-Policy when csp is set.
     if html_inline_ok:
         return _serve_inline_html_preview(handler, target, "no-store", csp=csp)
-    return _serve_file_bytes(handler, target, mime, disposition, "no-store", csp=csp)
+    return _serve_file_bytes(handler, target, mime, disposition, "no-store", csp=csp, frameable=pdf_inline_ok)
 
 
 def _handle_file_read(handler, parsed):
