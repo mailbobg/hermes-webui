@@ -492,9 +492,17 @@ async function openFile(path){
   if(!S.session)return;
   const ext=fileExt(path);
 
-  // Binary/download-only formats: trigger browser download, don't preview
+  // Non-previewable formats (Office docs, archives, binaries): the file already
+  // lives on disk, so open it with the OS default app instead of downloading a
+  // copy. Falls back to download if the native open fails (e.g. remote WebUI).
   if(DOWNLOAD_EXTS.has(ext)){
-    downloadFile(path);
+    try{
+      await api('/api/file/open-native',{method:'POST',body:JSON.stringify({session_id:S.session.session_id,path})});
+      if(typeof setStatus==='function') setStatus((t('file_opened_native')||'Opened')+ ' ' + (path.split('/').pop()||path));
+    }catch(e){
+      // Native open unavailable (remote host etc.) → fall back to download.
+      downloadFile(path);
+    }
     return;
   }
 

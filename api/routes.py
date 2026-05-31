@@ -6489,6 +6489,9 @@ def handle_post(handler, parsed) -> bool:
     if parsed.path == "/api/file/reveal":
         return _handle_file_reveal(handler, body)
 
+    if parsed.path == "/api/file/open-native":
+        return _handle_file_open_native(handler, body)
+
     if parsed.path == "/api/file/path":
         return _handle_file_path(handler, body)
 
@@ -11171,6 +11174,41 @@ def _handle_file_reveal(handler, body):
         else:
             # Linux / other — open parent directory
             subprocess.Popen(["xdg-open", str(target.parent)])
+
+        return j(handler, {"ok": True, "path": body["path"]})
+    except (ValueError, PermissionError, OSError) as e:
+        return bad(handler, _sanitize_error(e))
+
+
+def _handle_file_open_native(handler, body):
+    """Open a workspace file with the OS default application (local use).
+
+    Like _handle_file_reveal, this is meaningful only when the browser and the
+    WebUI run on the same machine — the file is opened on the *server* host.
+    Uses `open <file>` (macOS) / `start` (Windows) / `xdg-open` (Linux), which
+    launches the user's default app for that file type (e.g. Excel for .xlsx).
+    """
+    try:
+        require(body, "session_id", "path")
+    except ValueError as e:
+        return bad(handler, str(e))
+    try:
+        s = get_session(body["session_id"])
+    except KeyError:
+        return bad(handler, "Session not found", 404)
+    try:
+        target = safe_resolve(Path(s.workspace), body["path"])
+        if not target.exists():
+            return bad(handler, f"File not found: {target}", 404)
+
+        system = platform.system()
+        if system == "Darwin":
+            subprocess.Popen(["open", str(target)])
+        elif system == "Windows":
+            # `start` is a cmd builtin; the empty "" is the window-title arg.
+            subprocess.Popen(["cmd", "/c", "start", "", str(target)])
+        else:
+            subprocess.Popen(["xdg-open", str(target)])
 
         return j(handler, {"ok": True, "path": body["path"]})
     except (ValueError, PermissionError, OSError) as e:
