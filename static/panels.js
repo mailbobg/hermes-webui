@@ -4254,16 +4254,21 @@ async function _loadWorkspacePathSuggestions(prefix){
 // ── Directory browser (click-to-navigate, trusted roots only) ──────────────
 let _dirBrowserState={current:'',parent:null,roots:[],entries:[]};
 
-function openDirBrowser(){
+// Optional callback invoked with the chosen path instead of filling the
+// workspace-form input. Lets the same browser drive the composer "choose
+// workspace path" entry, not just the manage-workspaces form.
+let _dirBrowserOnPick=null;
+function openDirBrowser(opts){
   const overlay=$('dirBrowserOverlay');
   if(!overlay)return;
+  _dirBrowserOnPick=(opts&&typeof opts.onPick==='function')?opts.onPick:null;
   overlay.style.display='flex';
   overlay.setAttribute('aria-hidden','false');
   _dirBrowserOnKey=(e)=>{ if(e.key==='Escape'){ e.preventDefault(); closeDirBrowser(); } };
   document.addEventListener('keydown',_dirBrowserOnKey);
-  // Start from the value already in the input if any, else the trusted roots.
+  // Start from a provided path, else the value in the form input, else roots.
   const input=$('workspaceFormPath');
-  const start=(input&&input.value.trim())||'';
+  const start=(opts&&opts.start)||(input&&input.value.trim())||'';
   _dirBrowserNavigate(start);
 }
 
@@ -4272,6 +4277,7 @@ function closeDirBrowser(){
   const overlay=$('dirBrowserOverlay');
   if(overlay){ overlay.style.display='none'; overlay.setAttribute('aria-hidden','true'); }
   if(_dirBrowserOnKey){ document.removeEventListener('keydown',_dirBrowserOnKey); _dirBrowserOnKey=null; }
+  _dirBrowserOnPick=null;
   const input=$('workspaceFormPath');
   if(input) input.focus();
 }
@@ -4336,14 +4342,17 @@ function dirBrowserGoUp(){
 function dirBrowserUseCurrent(){
   const st=_dirBrowserState||{};
   if(!st.current) return;
+  const picked=st.current;
+  const onPick=_dirBrowserOnPick;
+  closeDirBrowser();
+  if(onPick){ onPick(picked); return; }
   const input=$('workspaceFormPath');
   if(input){
-    input.value=st.current;
+    input.value=picked;
     // Trigger the same validation/state path as manual typing.
     input.dispatchEvent(new Event('input',{bubbles:true}));
     closeWorkspacePathSuggestions();
   }
-  closeDirBrowser();
 }
 
 function scheduleWorkspacePathSuggestions(){
@@ -4981,6 +4990,14 @@ async function promptWorkspacePath(){
     }catch(e){showToast(t('workspace_switch_failed')+e.message);return;}
     if(!S.session)return;
   }
+  // Pick a folder via the directory browser (click to navigate) instead of
+  // typing a raw path. On "Use this folder", add it and switch this session.
+  if(typeof openDirBrowser==='function'){
+    if(typeof closeWsDropdown==='function')closeWsDropdown();
+    openDirBrowser({ start:S.session.workspace||'', onPick:_addAndSwitchWorkspace });
+    return;
+  }
+  // Fallback: manual prompt if the browser isn't available.
   const value=await showPromptDialog({
     title:t('workspace_switch_prompt_title'),
     message:t('workspace_switch_prompt_message'),
@@ -4988,7 +5005,11 @@ async function promptWorkspacePath(){
     placeholder:t('workspace_switch_prompt_placeholder'),
     value:S.session.workspace||''
   });
-  const path=(value||'').trim();
+  await _addAndSwitchWorkspace((value||'').trim());
+}
+
+async function _addAndSwitchWorkspace(path){
+  path=(path||'').trim();
   if(!path)return;
   try{
     const data=await api('/api/workspaces/add',{method:'POST',body:JSON.stringify({path})});
