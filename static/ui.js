@@ -8487,7 +8487,9 @@ function _renderTreeItems(container, entries, depth){
       const arrow=document.createElement('span');
       arrow.className='file-tree-toggle';
       const isExpanded=S._expandedDirs.has(item.path);
-      arrow.textContent=isExpanded?'\u2212':'+';  // \u2212 when open, + when collapsed
+      // macOS Finder-style disclosure chevron: \u203a collapsed, \u2304 expanded.
+      arrow.classList.toggle('expanded', isExpanded);
+      arrow.textContent='\u203a';  // \u203a \u2014 rotated to point down via CSS when expanded
       el.appendChild(arrow);
     }else{
       // Keep file icons aligned with sibling directories that occupy this
