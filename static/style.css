@@ -5281,3 +5281,10 @@ html{ scroll-behavior:smooth; }
 @media (max-width:640px){
   .ql-panel{width:96vw;height:90vh;border-radius:12px;}
 }
+
+/* User preference: the default secondary-text grey (--muted #8E8E93) reads too
+   light / washed-out on the white light theme. Darken it so nav labels, file
+   metadata, hints, and other secondary text are clearly readable (still a touch
+   lighter than the true-black --text so primary content keeps its emphasis).
+   Light mode only — dark mode keeps its own muted value. */
+:root:not(.dark){ --muted:#55555A; }
