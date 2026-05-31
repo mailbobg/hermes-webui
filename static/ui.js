@@ -8487,7 +8487,7 @@ function _renderTreeItems(container, entries, depth){
       const arrow=document.createElement('span');
       arrow.className='file-tree-toggle';
       const isExpanded=S._expandedDirs.has(item.path);
-      arrow.textContent=isExpanded?'\u25BE':'\u25B8';
+      arrow.textContent=isExpanded?'\u2212':'+';  // \u2212 when open, + when collapsed
       el.appendChild(arrow);
     }else{
       // Keep file icons aligned with sibling directories that occupy this
