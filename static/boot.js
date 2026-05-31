@@ -1053,6 +1053,11 @@ $('importFileInput').onchange=async(e)=>{
 // btnRefreshFiles is now panel-icon-btn in header (see HTML)
 function clearPreview(opts={}){
   const keepPanelOpen=!!(opts&&opts.keepPanelOpen);
+  // If the Quick Look overlay is open, close it first so #previewArea is moved
+  // back into .rightpanel before we reset/clear its child nodes below.
+  if(typeof _quickLookOpen!=='undefined'&&_quickLookOpen&&typeof closeQuickLook==='function'){
+    closeQuickLook();
+  }
   // Restore directory breadcrumb after closing file preview
   if(typeof renderBreadcrumb==='function') renderBreadcrumb();
   const closePanelAfter=_workspacePanelMode==='preview'&&!keepPanelOpen;

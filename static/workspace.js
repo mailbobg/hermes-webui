@@ -501,6 +501,90 @@ async function openFileNative(path){
   }
 }
 
+// ---------------------------------------------------------------------------
+// Quick Look — macOS-style centered floating preview (DOM-lift method).
+// We do NOT re-render anything: the existing #previewArea node is physically
+// moved (appendChild) into #quicklookStage on open and back into .rightpanel
+// on close. All child ids stay the same, so every renderer keeps working.
+// ---------------------------------------------------------------------------
+let _quickLookOpen=false;
+let _qlKeyHandler=null;
+
+function openQuickLook(){
+  if(_quickLookOpen)return;
+  const overlay=$('quicklookOverlay');
+  const stage=$('quicklookStage');
+  const preview=$('previewArea');
+  if(!overlay||!stage||!preview)return; // defensive: missing DOM
+  stage.appendChild(preview);
+  overlay.style.display='flex';
+  overlay.setAttribute('aria-hidden','false');
+  // next frame: add .open so the CSS transition runs from the initial state
+  requestAnimationFrame(()=>requestAnimationFrame(()=>overlay.classList.add('open')));
+  _qlKeyHandler=function(e){
+    if(e.key==='Escape'){e.preventDefault();closeQuickLook();}
+    else if(e.key==='ArrowUp'||e.key==='ArrowLeft'){e.preventDefault();quickLookNav(-1);}
+    else if(e.key==='ArrowDown'||e.key==='ArrowRight'){e.preventDefault();quickLookNav(1);}
+  };
+  document.addEventListener('keydown',_qlKeyHandler,true);
+  _quickLookOpen=true;
+}
+
+function closeQuickLook(){
+  if(!_quickLookOpen)return;
+  const overlay=$('quicklookOverlay');
+  const preview=$('previewArea');
+  if(_qlKeyHandler){document.removeEventListener('keydown',_qlKeyHandler,true);_qlKeyHandler=null;}
+  _quickLookOpen=false;
+  if(overlay)overlay.classList.remove('open');
+  setTimeout(()=>{
+    if(overlay){overlay.style.display='none';overlay.setAttribute('aria-hidden','true');}
+    // Move previewArea back to its original home (last child of .rightpanel,
+    // after #fileTree). rightpanel.appendChild restores original position.
+    const rightpanel=document.querySelector('.rightpanel');
+    if(preview&&rightpanel)rightpanel.appendChild(preview);
+    if(preview)preview.classList.remove('visible'); // back to hidden in side panel
+    const ft=$('fileTree');if(ft)ft.style.display=''; // show the file tree again
+  },280);
+}
+
+function quickLookReveal(){
+  if(!S.session||!_previewCurrentPath)return;
+  api('/api/file/reveal',{method:'POST',body:JSON.stringify({session_id:S.session.session_id,path:_previewCurrentPath})})
+    .catch(err=>{if(typeof showToast==='function')showToast((typeof t==='function'?t('reveal_failed'):'Reveal failed: ')+(err.message||err));});
+}
+
+// Ordered list of previewable files in the current directory (excludes dirs and
+// download-only formats). Used for ↑/↓ navigation and the counter.
+function _quickLookFiles(){
+  const entries=(S&&Array.isArray(S.entries))?S.entries:[];
+  return entries.filter(e=>e&&e.type!=='dir'&&!DOWNLOAD_EXTS.has(fileExt(e.path||e.name||'')));
+}
+
+function quickLookNav(dir){
+  if(!_quickLookOpen)return;
+  const files=_quickLookFiles();
+  if(!files.length)return;
+  let idx=files.findIndex(e=>e.path===_previewCurrentPath);
+  if(idx<0)idx=0; // current file not in list (shouldn't happen) — start from edge
+  const next=idx+dir;
+  if(next<0||next>=files.length)return; // no wrap-around
+  const target=files[next];
+  if(!target||!target.path)return;
+  openFile(target.path);
+}
+
+function _updateQuickLookChrome(){
+  const counter=$('qlCounter');
+  const prev=$('qlPrev');
+  const next=$('qlNext');
+  const files=_quickLookFiles();
+  const idx=files.findIndex(e=>e.path===_previewCurrentPath);
+  if(counter)counter.textContent=(idx>=0&&files.length)?`${idx+1} / ${files.length}`:'';
+  if(prev)prev.disabled=!(idx>0);
+  if(next)next.disabled=!(idx>=0&&idx<files.length-1);
+}
+
 async function openFile(path){
   if(!S.session)return;
   const ext=fileExt(path);
@@ -515,10 +599,11 @@ async function openFile(path){
 
   $('previewPathText').textContent=path;
   $('previewArea').classList.add('visible');
-  $('fileTree').style.display='none';
+  openQuickLook();
 
   _previewCurrentPath = path;
   renderFileBreadcrumb(path);
+  _updateQuickLookChrome();
   if(IMAGE_EXTS.has(ext)){
     // Image: load via raw endpoint, show as <img>
     showPreview('image');

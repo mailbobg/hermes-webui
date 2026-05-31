@@ -1384,6 +1384,25 @@
     </div>
   </aside>
 </div>
+<div id="quicklookOverlay" class="ql-overlay" aria-hidden="true" role="dialog" aria-modal="true" style="display:none">
+  <div class="ql-backdrop" onclick="closeQuickLook()"></div>
+  <div class="ql-panel" role="document">
+    <div class="ql-chrome">
+      <div class="ql-chrome-left">
+        <button class="ql-nav-btn" id="qlPrev" type="button" onclick="quickLookNav(-1)" title="上一个 (↑)" aria-label="Previous">‹</button>
+        <button class="ql-nav-btn" id="qlNext" type="button" onclick="quickLookNav(1)" title="下一个 (↓)" aria-label="Next">›</button>
+        <span class="ql-counter" id="qlCounter"></span>
+      </div>
+      <div class="ql-chrome-right">
+        <button class="ql-action" id="qlOpenNative" type="button" onclick="openFileNative(_previewCurrentPath)" title="用默认程序打开">⤢</button>
+        <button class="ql-action" id="qlReveal" type="button" title="在访达中显示" onclick="quickLookReveal()">⤷</button>
+        <button class="ql-close" id="qlClose" type="button" onclick="closeQuickLook()" title="关闭 (Esc)" aria-label="Close">×</button>
+      </div>
+    </div>
+    <div class="ql-stage" id="quicklookStage"></div>
+    <div class="ql-hint">ESC 关闭 · ↑↓ 切换文件</div>
+  </div>
+</div>
 <div class="onboarding-overlay" id="onboardingOverlay" style="display:none" role="dialog" aria-modal="true" aria-labelledby="onboardingTitle">
   <div class="onboarding-card">
     <div class="onboarding-shell">
