@@ -2759,6 +2759,7 @@ from api.workspace import (
     list_dir,
     dir_signature,
     list_workspace_suggestions,
+    list_directory,
     read_file_content,
     safe_resolve_ws,
     resolve_trusted_workspace,
@@ -5009,6 +5010,11 @@ def handle_get(handler, parsed) -> bool:
                 "prefix": prefix,
             },
         )
+
+    if parsed.path == "/api/workspaces/browse":
+        qs = parse_qs(parsed.query)
+        path = qs.get("path", [""])[0]
+        return j(handler, list_directory(path))
 
     if parsed.path == "/api/sessions/search":
         return _handle_sessions_search(handler, parsed)

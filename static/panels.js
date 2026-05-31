@@ -4251,6 +4251,101 @@ async function _loadWorkspacePathSuggestions(prefix){
   }
 }
 
+// ── Directory browser (click-to-navigate, trusted roots only) ──────────────
+let _dirBrowserState={current:'',parent:null,roots:[],entries:[]};
+
+function openDirBrowser(){
+  const overlay=$('dirBrowserOverlay');
+  if(!overlay)return;
+  overlay.style.display='flex';
+  overlay.setAttribute('aria-hidden','false');
+  _dirBrowserOnKey=(e)=>{ if(e.key==='Escape'){ e.preventDefault(); closeDirBrowser(); } };
+  document.addEventListener('keydown',_dirBrowserOnKey);
+  // Start from the value already in the input if any, else the trusted roots.
+  const input=$('workspaceFormPath');
+  const start=(input&&input.value.trim())||'';
+  _dirBrowserNavigate(start);
+}
+
+let _dirBrowserOnKey=null;
+function closeDirBrowser(){
+  const overlay=$('dirBrowserOverlay');
+  if(overlay){ overlay.style.display='none'; overlay.setAttribute('aria-hidden','true'); }
+  if(_dirBrowserOnKey){ document.removeEventListener('keydown',_dirBrowserOnKey); _dirBrowserOnKey=null; }
+  const input=$('workspaceFormPath');
+  if(input) input.focus();
+}
+
+let _dirBrowserReq=0;
+async function _dirBrowserNavigate(path){
+  const reqId=++_dirBrowserReq;
+  const listEl=$('dirBrowserList');
+  if(listEl) listEl.innerHTML=`<div class="dir-browser-empty">${esc(t('loading')||'Loading...')}</div>`;
+  try{
+    const qs=new URLSearchParams({path:path||''}).toString();
+    const data=await api(`/api/workspaces/browse?${qs}`);
+    if(reqId!==_dirBrowserReq)return;
+    if(data && data.error){
+      if(listEl) listEl.innerHTML=`<div class="dir-browser-empty">${esc(t('workspace_browse_not_allowed')||'This folder cannot be browsed.')}</div>`;
+      return;
+    }
+    _dirBrowserState=data||{current:'',parent:null,roots:[],entries:[]};
+    _renderDirBrowser();
+  }catch(_){
+    if(reqId!==_dirBrowserReq)return;
+    if(listEl) listEl.innerHTML=`<div class="dir-browser-empty">${esc(t('workspace_browse_not_allowed')||'This folder cannot be browsed.')}</div>`;
+  }
+}
+
+function _renderDirBrowser(){
+  const st=_dirBrowserState||{};
+  const pathEl=$('dirBrowserPath');
+  const upBtn=$('dirBrowserUp');
+  const useBtn=$('dirBrowserUse');
+  const listEl=$('dirBrowserList');
+  const atRoots=!st.current;
+  if(pathEl) pathEl.textContent=atRoots?(t('workspace_browse_roots')||'Choose a starting folder'):st.current;
+  if(upBtn) upBtn.disabled=atRoots || st.parent==null;
+  // "Use this folder" only makes sense once inside an actual directory.
+  if(useBtn) useBtn.disabled=atRoots;
+  if(!listEl)return;
+  listEl.innerHTML='';
+  const rows = atRoots
+    ? (st.roots||[]).map(r=>({name:r.name,path:r.path}))
+    : (st.entries||[]);
+  if(!rows.length){
+    listEl.innerHTML=`<div class="dir-browser-empty">${esc(atRoots?(t('workspace_browse_no_roots')||'No folders available.'):(t('workspace_browse_empty')||'No sub-folders here.'))}</div>`;
+    return;
+  }
+  rows.forEach(row=>{
+    const item=document.createElement('button');
+    item.type='button';
+    item.className='dir-browser-item';
+    item.innerHTML=`<span class="dir-browser-icon">📁</span><span class="dir-browser-name">${esc(row.name)}</span>`;
+    item.onclick=()=>_dirBrowserNavigate(row.path);
+    listEl.appendChild(item);
+  });
+}
+
+function dirBrowserGoUp(){
+  const st=_dirBrowserState||{};
+  if(st.parent==null){ _dirBrowserNavigate(''); return; }
+  _dirBrowserNavigate(st.parent);
+}
+
+function dirBrowserUseCurrent(){
+  const st=_dirBrowserState||{};
+  if(!st.current) return;
+  const input=$('workspaceFormPath');
+  if(input){
+    input.value=st.current;
+    // Trigger the same validation/state path as manual typing.
+    input.dispatchEvent(new Event('input',{bubbles:true}));
+    closeWorkspacePathSuggestions();
+  }
+  closeDirBrowser();
+}
+
 function scheduleWorkspacePathSuggestions(){
   const input=$('workspaceFormPath');
   if(!input)return;
@@ -4741,7 +4836,10 @@ function _renderWorkspaceForm({ name, path, isEdit }){
         <div class="detail-form-row">
           <label for="workspaceFormPath">${esc(t('workspace_path_label') || 'Path')}</label>
           <div class="workspace-form-path-wrap" style="position:relative">
-            <input type="text" id="workspaceFormPath" value="${esc(path || '')}" placeholder="${esc(t('workspace_add_path_placeholder') || '/absolute/path/to/folder')}" autocomplete="off" ${pathDisabled} required>
+            <div class="workspace-form-path-row" style="display:flex;gap:8px;align-items:stretch">
+              <input type="text" id="workspaceFormPath" value="${esc(path || '')}" placeholder="${esc(t('workspace_add_path_placeholder') || '/absolute/path/to/folder')}" autocomplete="off" ${pathDisabled} required style="flex:1">
+              ${isEdit ? '' : `<button type="button" class="app-dialog-btn workspace-form-browse" onclick="openDirBrowser()" data-i18n-title="workspace_browse" title="${esc(t('workspace_browse') || 'Browse…')}">📁 ${esc(t('workspace_browse') || 'Browse…')}</button>`}
+            </div>
             <div id="workspaceFormPathSuggestions" class="ws-suggestions" style="display:none"></div>
           </div>
           ${pathHint}

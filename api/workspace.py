@@ -614,6 +614,117 @@ def resolve_trusted_workspace(path: str | Path | None = None) -> Path:
     )
 
 
+def list_directory(path: str = "") -> dict:
+    """Browse directories one level at a time, restricted to trusted roots.
+
+    This powers a click-to-navigate directory browser for the workspace
+    add/edit form.  It reuses the exact same security boundary as
+    ``list_workspace_suggestions`` / ``_trusted_workspace_roots``:
+
+      * An empty ``path`` returns the list of trusted roots as starting points
+        (home, the boot default workspace, and already-saved workspaces).
+      * A non-empty ``path`` is resolved and must live *inside* one of the
+        trusted roots (or be a trusted root itself) and must not be a blocked
+        system directory.  Any path outside that boundary -- including ``..``
+        escapes, ``/etc``, ``/``, or arbitrary system paths -- returns
+        ``{"error": "not allowed", "entries": []}`` and never leaks listings.
+
+    Only sub-directories are returned (workspaces are directories), sorted
+    case-insensitively by name.  Hidden dot-directories (``.git``, ``.cache``,
+    ...) are filtered out to reduce noise.
+
+    Returns a dict::
+
+        {
+            "current": "<normalized current path or ''>",
+            "parent": "<parent path or None when at a trusted-root top>",
+            "entries": [{"name": ..., "path": ...}, ...],
+            "roots": [{"name": ..., "path": ..., "is_root": True}, ...],  # path == ""
+        }
+    """
+    roots = _trusted_workspace_roots()
+
+    raw = (path or "").strip()
+    if raw:
+        raw = _strip_surrounding_quotes(raw)
+
+    # Empty path → return the trusted roots as starting points.
+    if not raw:
+        return {
+            "current": "",
+            "parent": None,
+            "entries": [],
+            "roots": [
+                {"name": p.name or str(p), "path": str(p), "is_root": True}
+                for p in roots
+            ],
+        }
+
+    try:
+        if raw.startswith("~"):
+            target = Path(raw).expanduser().resolve()
+        else:
+            target = Path(raw).expanduser().resolve()
+    except Exception:
+        return {"current": "", "parent": None, "entries": [], "error": "not allowed"}
+
+    # Security boundary: target must be inside (or equal to) a trusted root and
+    # must not be a blocked system directory.  resolve() above neutralizes any
+    # ``..`` traversal before this check runs.
+    if _is_blocked_workspace_path(target, raw):
+        return {"current": "", "parent": None, "entries": [], "error": "not allowed"}
+
+    containing_roots = [r for r in roots if target == r or _is_within(target, r)]
+    if not containing_roots:
+        return {"current": "", "parent": None, "entries": [], "error": "not allowed"}
+
+    if not target.exists() or not target.is_dir():
+        return {
+            "current": str(target),
+            "parent": None,
+            "entries": [],
+            "error": "not found",
+        }
+
+    # Determine the parent.  We may ascend only while staying within a trusted
+    # root; at a trusted-root top, parent is None.
+    anchor_root = max(containing_roots, key=lambda p: len(str(p)))
+    if target == anchor_root:
+        parent: str | None = None
+    else:
+        parent_path = target.parent
+        if parent_path == target or not _is_within(parent_path, anchor_root) \
+                and parent_path != anchor_root:
+            parent = None
+        else:
+            parent = str(parent_path)
+
+    entries: list[dict] = []
+    try:
+        children = sorted(target.iterdir(), key=lambda p: p.name.lower())
+    except OSError:
+        return {
+            "current": str(target),
+            "parent": parent,
+            "entries": [],
+            "error": "not allowed",
+        }
+
+    for child in children:
+        try:
+            if not child.is_dir():
+                continue
+        except OSError:
+            continue
+        if child.name.startswith("."):
+            continue
+        entries.append({"name": child.name, "path": str(child)})
+
+    return {
+        "current": str(target),
+        "parent": parent,
+        "entries": entries,
+    }
 
 
 def _strip_surrounding_quotes(path: str) -> str:

@@ -1422,6 +1422,25 @@
     </div>
   </div>
 </div>
+<div class="app-dialog-overlay" id="dirBrowserOverlay" style="display:none" aria-hidden="true">
+  <div class="app-dialog dir-browser" id="dirBrowser" role="dialog" aria-modal="true" aria-labelledby="dirBrowserTitle">
+    <div class="app-dialog-header">
+      <div class="app-dialog-title" id="dirBrowserTitle" data-i18n="workspace_browse_title">Choose workspace folder</div>
+      <button class="app-dialog-close" id="dirBrowserClose" type="button" aria-label="Close" onclick="closeDirBrowser()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="dir-browser-bar">
+      <button class="app-dialog-btn dir-browser-up" id="dirBrowserUp" type="button" onclick="dirBrowserGoUp()" data-i18n-title="workspace_browse_up" title="Up">↑</button>
+      <div class="dir-browser-path" id="dirBrowserPath"></div>
+    </div>
+    <div class="dir-browser-list" id="dirBrowserList"></div>
+    <div class="app-dialog-actions">
+      <button class="app-dialog-btn" id="dirBrowserCancel" type="button" onclick="closeDirBrowser()" data-i18n="cancel">Cancel</button>
+      <button class="app-dialog-btn confirm" id="dirBrowserUse" type="button" onclick="dirBrowserUseCurrent()" data-i18n="workspace_browse_use">Use this folder</button>
+    </div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 <script src="static/i18n.js?v=__WEBUI_VERSION__" defer></script>
 <script src="static/icons.js?v=__WEBUI_VERSION__" defer></script>
