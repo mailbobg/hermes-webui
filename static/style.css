@@ -21,7 +21,7 @@
     --radius-sm:8px;--radius-md:12px;--radius-card:16px;--radius-lg:20px;--radius-pill:999px;
     --space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;
     --font-size-xs:11px;--font-size-sm:12px;--font-size-md:14px;
-    --file-tree-toggle-width:10px;
+    --file-tree-toggle-width:16px;
     --font-ui:"Noto Serif SC",-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue",Helvetica,Arial,sans-serif;
     --surface-subtle:rgba(0,0,0,.03);--surface-subtle-hover:rgba(0,0,0,.05);
     --border-subtle:rgba(0,0,0,.07);--border-muted:rgba(0,0,0,.11);
@@ -1970,7 +1970,8 @@
   .file-item{display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:8px;cursor:pointer;font-size:12px;color:var(--muted);transition:all .12s;min-width:0;}
   .file-item:hover{background:var(--hover-bg);color:var(--text);}
   .file-item.active{background:var(--accent-bg);color:var(--accent-text);}
-  .file-tree-toggle{font-size:10px;color:var(--muted);flex-shrink:0;width:var(--file-tree-toggle-width);text-align:center;line-height:1;}
+  .file-tree-toggle{font-size:13px;color:var(--muted);flex-shrink:0;width:var(--file-tree-toggle-width);text-align:center;line-height:1;cursor:pointer;transition:color .12s;}
+  .file-tree-toggle:hover{color:var(--text);}
   .file-tree-toggle-placeholder{display:inline-block;flex:0 0 var(--file-tree-toggle-width);width:var(--file-tree-toggle-width);line-height:1;}
   .file-item.file-empty{color:var(--muted);opacity:.5;font-style:italic;cursor:default;font-size:11px;}
   .file-item.file-empty:hover{background:none;color:var(--muted);}
