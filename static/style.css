@@ -5316,3 +5316,7 @@ html{ scroll-behavior:smooth; }
 .file-icon--font{ color:#bf5af2; }
 .file-icon--key{ color:#ffb340; }
 .file-icon--git{ color:#f05133; }
+
+/* Workspace-root breadcrumb: a home icon instead of a bare "~". */
+.breadcrumb-home{ display:inline-flex; align-items:center; }
+.breadcrumb-home svg{ width:15px; height:15px; vertical-align:middle; }

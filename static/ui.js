@@ -8172,8 +8172,9 @@ function renderBreadcrumb(){
   bar.innerHTML='';
   // Root segment
   const root=document.createElement('span');
-  root.className='breadcrumb-seg breadcrumb-link';
-  root.textContent='~';
+  root.className='breadcrumb-seg breadcrumb-link breadcrumb-home';
+  root.innerHTML=(typeof li==='function')?li('home',15):'~';
+  root.title=t('workspace')||'Workspace root';
   root.onclick=()=>loadDir('.');
   bar.appendChild(root);
   // Path segments
