@@ -4831,10 +4831,9 @@ function _renderWorkspaceForm({ name, path, isEdit }){
   const empty = $('workspaceDetailEmpty');
   if (!title || !body) return;
   title.textContent = isEdit ? (t('edit') + ' · ' + (name || path)) : (t('workspace_new_title') || 'New space');
-  const pathDisabled = isEdit ? 'disabled' : '';
-  const pathHint = isEdit
-    ? `<div class="detail-form-hint">${esc(t('workspace_path_readonly') || 'Path cannot be changed. Rename only.')}</div>`
-    : `<div class="detail-form-hint">${esc(t('workspace_paths_validated_hint'))}</div>`;
+  // Path is editable in both new and edit mode (changing it re-points the space).
+  const pathDisabled = '';
+  const pathHint = `<div class="detail-form-hint">${esc(t('workspace_paths_validated_hint'))}</div>`;
   body.innerHTML = `
     <div class="main-view-content">
       <form class="detail-form" onsubmit="event.preventDefault(); saveWorkspaceForm();">
@@ -4847,7 +4846,7 @@ function _renderWorkspaceForm({ name, path, isEdit }){
           <div class="workspace-form-path-wrap" style="position:relative">
             <div class="workspace-form-path-row" style="display:flex;gap:8px;align-items:stretch">
               <input type="text" id="workspaceFormPath" value="${esc(path || '')}" placeholder="${esc(t('workspace_add_path_placeholder') || '/absolute/path/to/folder')}" autocomplete="off" ${pathDisabled} required style="flex:1">
-              ${isEdit ? '' : `<button type="button" class="app-dialog-btn workspace-form-browse" onclick="openDirBrowser()" data-i18n-title="workspace_browse" title="${esc(t('workspace_browse') || 'Browse…')}">📁 ${esc(t('workspace_browse') || 'Browse…')}</button>`}
+              <button type="button" class="app-dialog-btn workspace-form-browse" onclick="openDirBrowser()" data-i18n-title="workspace_browse" title="${esc(t('workspace_browse') || 'Browse…')}">📁 ${esc(t('workspace_browse') || 'Browse…')}</button>
             </div>
             <div id="workspaceFormPathSuggestions" class="ws-suggestions" style="display:none"></div>
           </div>
@@ -4886,16 +4885,27 @@ async function saveWorkspaceForm(){
   if (!path) { errEl.textContent = t('workspace_path_required') || 'Path is required'; errEl.style.display = ''; return; }
   try {
     if (_workspaceMode === 'edit' && _currentWorkspaceDetail) {
-      const targetPath = _currentWorkspaceDetail.path;
+      const oldPath = _currentWorkspaceDetail.path;
       const newName = name || _currentWorkspaceDetail.name || '';
-      await api('/api/workspaces/rename', { method:'POST', body: JSON.stringify({ path: targetPath, name: newName }) });
+      const pathChanged = path && path !== oldPath;
+      if (pathChanged) {
+        // Re-point the space: add the new path (with name), then drop the old one.
+        const added = await api('/api/workspaces/add', { method:'POST', body: JSON.stringify({ path }) });
+        _workspaceList = added.workspaces || _workspaceList;
+        if (newName) {
+          try { await api('/api/workspaces/rename', { method:'POST', body: JSON.stringify({ path, name: newName }) }); } catch(_) {}
+        }
+        try { await api('/api/workspaces/remove', { method:'POST', body: JSON.stringify({ path: oldPath }) }); } catch(_) {}
+      } else {
+        await api('/api/workspaces/rename', { method:'POST', body: JSON.stringify({ path: oldPath, name: newName }) });
+      }
       // Refresh list and re-render detail
       const data = await api('/api/workspaces');
       _workspaceList = data.workspaces || [];
       _workspacePreFormDetail = null;
-      showToast(t('workspace_renamed') || t('workspace_added'));
+      showToast(pathChanged ? (t('workspace_added') || 'Saved') : (t('workspace_renamed') || t('workspace_added')));
       renderWorkspacesPanel(_workspaceList);
-      openWorkspaceDetail(targetPath);
+      openWorkspaceDetail(pathChanged ? path : oldPath);
       return;
     }
     const data = await api('/api/workspaces/add', { method:'POST', body: JSON.stringify({ path }) });
