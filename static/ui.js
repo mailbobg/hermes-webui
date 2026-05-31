@@ -8115,18 +8115,47 @@ function removeThinking(){
   if(turn&&blocks&&!blocks.children.length) turn.remove();
 }
 
-function fileIcon(name, type){
-  if(type==='dir') return li('folder',14);
+// Map a file to {icon, cat}: a type-specific glyph from the icon set and a broad
+// category used to colour it (see .file-icon--* in style.css). Keeps everything
+// distinguishable at a glance like a real file manager.
+function fileIconInfo(name, type){
+  if(type==='dir') return {icon:'folder', cat:'dir'};
   const e=fileExt(name);
-  if(IMAGE_EXTS.has(e)) return li('image',14);
-  if(MD_EXTS.has(e))    return li('file-text',14);
-  if(typeof DOWNLOAD_EXTS!=='undefined'&&DOWNLOAD_EXTS.has(e)) return li('download',14);
-  if(e==='.py')   return li('file-code',14);
-  if(e==='.js'||e==='.ts'||e==='.jsx'||e==='.tsx') return li('zap',14);
-  if(e==='.json'||e==='.yaml'||e==='.yml'||e==='.toml') return li('settings',14);
-  if(e==='.sh'||e==='.bash') return li('terminal',14);
-  if(e==='.pdf') return li('download',14);
-  return li('file-text',14);
+  const n=(name||'').toLowerCase();
+  // images / media
+  if(typeof IMAGE_EXTS!=='undefined'&&IMAGE_EXTS.has(e)) return {icon:'image', cat:'image'};
+  if(typeof AUDIO_EXTS!=='undefined'&&AUDIO_EXTS.has(e)) return {icon:'audio-lines', cat:'media'};
+  if(typeof VIDEO_EXTS!=='undefined'&&VIDEO_EXTS.has(e)) return {icon:'play', cat:'media'};
+  // documents
+  if(e==='.pdf') return {icon:'book-open', cat:'pdf'};
+  if(typeof MD_EXTS!=='undefined'&&MD_EXTS.has(e)) return {icon:'file-text', cat:'doc'};
+  if(['.txt','.rtf','.log'].includes(e)) return {icon:'file-text', cat:'doc'};
+  if(['.doc','.docx','.odt'].includes(e)) return {icon:'file-text', cat:'word'};
+  if(['.xls','.xlsx','.csv','.tsv','.ods'].includes(e)) return {icon:'clipboard-list', cat:'sheet'};
+  if(['.ppt','.pptx','.odp'].includes(e)) return {icon:'layers', cat:'slide'};
+  // code
+  if(['.js','.ts','.jsx','.tsx','.mjs','.cjs'].includes(e)) return {icon:'zap', cat:'js'};
+  if(['.html','.htm','.xml'].includes(e)) return {icon:'globe', cat:'web'};
+  if(['.css','.scss','.sass','.less'].includes(e)) return {icon:'hash', cat:'web'};
+  if(['.json','.jsonl'].includes(e)) return {icon:'braces', cat:'data'};
+  if(['.yaml','.yml','.toml','.ini','.cfg','.conf','.env'].includes(e)||n==='.env') return {icon:'settings', cat:'config'};
+  if(['.sh','.bash','.zsh','.fish'].includes(e)) return {icon:'terminal', cat:'shell'};
+  if(['.py','.rb','.go','.rs','.java','.c','.cpp','.cc','.h','.hpp','.cs','.php','.swift','.kt','.lua','.r','.sql'].includes(e)) return {icon:'file-code', cat:'code'};
+  // archives / binaries / db / fonts / keys
+  if(['.zip','.tar','.gz','.bz2','.7z','.rar','.xz','.tgz'].includes(e)) return {icon:'archive', cat:'archive'};
+  if(['.exe','.dmg','.pkg','.deb','.rpm','.bin','.so','.dylib','.dll','.app','.pyc','.class'].includes(e)) return {icon:'cpu', cat:'binary'};
+  if(['.db','.sqlite','.sqlite3'].includes(e)) return {icon:'layers', cat:'data'};
+  if(['.woff','.woff2','.ttf','.otf','.eot'].includes(e)) return {icon:'hash', cat:'font'};
+  if(['.lock','.pem','.key','.crt','.cert','.p12'].includes(e)) return {icon:'lock', cat:'key'};
+  if(['.gitignore','.gitattributes','.gitmodules'].includes(n)) return {icon:'git-branch', cat:'git'};
+  return {icon:'file-text', cat:'file'};
+}
+
+function fileIcon(name, type){
+  return li(fileIconInfo(name,type).icon, 14);
+}
+function fileIconCat(name, type){
+  return fileIconInfo(name,type).cat;
 }
 
 function renderBreadcrumb(){
@@ -8471,7 +8500,7 @@ function _renderTreeItems(container, entries, depth){
 
     // Icon
     const iconEl=document.createElement('span');
-    iconEl.className='file-icon';iconEl.innerHTML=fileIcon(item.name,item.type);
+    iconEl.className='file-icon file-icon--'+fileIconCat(item.name,item.type);iconEl.innerHTML=fileIcon(item.name,item.type);
     el.appendChild(iconEl);
 
     // Name

@@ -5288,3 +5288,27 @@ html{ scroll-behavior:smooth; }
    lighter than the true-black --text so primary content keeps its emphasis).
    Light mode only — dark mode keeps its own muted value. */
 :root:not(.dark){ --muted:#55555A; }
+
+/* File-tree icons coloured by type so file kinds are distinguishable at a glance
+   (folders blue, images green, code blue, sheets green, docs/word, archives
+   amber, config purple, etc.). Restrained Apple-ish palette. */
+.file-icon{ color:var(--muted); }
+.file-icon--dir{ color:#3b82f6; }
+.file-icon--image{ color:#34c759; }
+.file-icon--media{ color:#ff375f; }
+.file-icon--pdf{ color:#ff3b30; }
+.file-icon--doc{ color:#8e8e93; }
+.file-icon--word{ color:#2b7fff; }
+.file-icon--sheet{ color:#19a974; }
+.file-icon--slide{ color:#ff9500; }
+.file-icon--code{ color:#0a84ff; }
+.file-icon--js{ color:#e3a008; }
+.file-icon--web{ color:#ff6b35; }
+.file-icon--data{ color:#af52de; }
+.file-icon--config{ color:#8b5cf6; }
+.file-icon--shell{ color:#30b0c7; }
+.file-icon--archive{ color:#ff9f0a; }
+.file-icon--binary{ color:#8e8e93; }
+.file-icon--font{ color:#bf5af2; }
+.file-icon--key{ color:#ffb340; }
+.file-icon--git{ color:#f05133; }
