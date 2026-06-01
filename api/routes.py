@@ -4413,6 +4413,11 @@ def handle_get(handler, parsed) -> bool:
     if parsed.path == "/api/providers":
         return j(handler, get_providers())
 
+    # ── Agent connection (local vs remote gateway) state (GET) ──
+    if parsed.path == "/api/agent-connection":
+        from api.agent_connection import get_agent_connection
+        return j(handler, get_agent_connection())
+
     # ── Platforms: Feishu (飞书 / Lark) config (GET) ──
     if parsed.path == "/api/platforms/feishu":
         from api.platforms import feishu
@@ -5739,6 +5744,25 @@ def handle_post(handler, parsed) -> bool:
         if not result.get("ok"):
             return bad(handler, result.get("error", "Unknown error"))
         return j(handler, result)
+
+    # ── Agent connection (local vs remote gateway) save ──
+    if parsed.path == "/api/agent-connection":
+        from api.agent_connection import (
+            AgentConnectionError,
+            set_agent_connection,
+        )
+        try:
+            result = set_agent_connection(
+                body.get("mode"), body.get("gateway_base_url")
+            )
+        except AgentConnectionError as exc:  # ValueError subclass
+            return bad(handler, str(exc), status=400)
+        return j(handler, result)
+
+    # ── Stop the background Hermes Agent gateway (not the WebUI server) ──
+    if parsed.path == "/api/gateway/stop":
+        from api.agent_connection import stop_gateway
+        return j(handler, stop_gateway())
 
     # ── Platforms: Feishu (飞书 / Lark) credential probe ──
     if parsed.path == "/api/platforms/feishu/validate":

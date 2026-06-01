@@ -1285,6 +1285,25 @@
             </div>
             <button class="sm-btn" id="btnDisableAuth" onclick="disableAuth()" style="margin-top:6px;width:100%;padding:8px;font-weight:600;color:#e8a030;border-color:rgba(232,160,48,.3);display:none" data-i18n="disable_auth">Disable Auth</button>
             <button class="sm-btn" id="btnSignOut" onclick="signOut()" style="margin-top:6px;width:100%;padding:8px;font-weight:600;color:var(--accent);border-color:rgba(233,69,96,.3);display:none" data-i18n="sign_out">Sign Out</button>
+            <div class="settings-field" id="agentConnectionBlock" style="margin-top:18px;padding-top:16px;border-top:1px solid var(--border)">
+              <label for="settingsAgentConnMode" data-i18n="settings_label_agent_conn">Agent connection</label>
+              <div style="font-size:11px;color:var(--muted);margin-bottom:8px" data-i18n="settings_desc_agent_conn">Choose where the agent runs. <strong>Local</strong> embeds the agent in this WebUI (default). <strong>Remote</strong> bridges chat to a remote Hermes Gateway. Changes take effect immediately — no restart.</div>
+              <div id="agentConnEnvWarn" style="display:none;margin-bottom:8px;padding:8px 10px;font-size:11px;color:#e8a030;background:rgba(232,160,48,.08);border:1px solid rgba(232,160,48,.3);border-radius:6px;line-height:1.45" data-i18n="settings_agent_conn_env_warn">Agent connection is currently controlled by an environment variable. Changes made here will not take effect until it is unset.</div>
+              <select id="settingsAgentConnMode" onchange="onAgentConnModeChange()" style="width:100%;padding:8px;background:var(--code-bg);color:var(--text);border:1px solid var(--border2);border-radius:6px;font-size:13px">
+                <option value="local" data-i18n="settings_agent_conn_local">Local (default)</option>
+                <option value="remote" data-i18n="settings_agent_conn_remote">Remote gateway</option>
+              </select>
+              <div id="agentConnRemoteRow" style="display:none;margin-top:8px">
+                <label for="settingsAgentConnUrl" style="font-size:11px;color:var(--muted)" data-i18n="settings_label_agent_conn_url">Remote gateway address</label>
+                <input type="text" id="settingsAgentConnUrl" placeholder="http://127.0.0.1:8642" style="width:100%;padding:8px;margin-top:4px;background:var(--code-bg);color:var(--text);border:1px solid var(--border2);border-radius:6px;font-size:13px">
+              </div>
+              <button class="sm-btn" id="btnSaveAgentConn" onclick="saveAgentConnection()" style="margin-top:8px;width:100%;padding:8px;font-weight:600" data-i18n="settings_btn_save_agent_conn">Save</button>
+            </div>
+            <div class="settings-field" id="stopGatewayBlock" style="margin-top:18px;padding-top:16px;border-top:1px solid var(--border)">
+              <label data-i18n="settings_label_stop_gateway">Stop the background Hermes Agent</label>
+              <div style="font-size:11px;color:var(--muted);margin-bottom:8px" data-i18n="settings_desc_stop_gateway">Runs <code>hermes gateway stop</code> to stop the background agent gateway (messaging platforms / scheduled jobs). The WebUI keeps running and stays usable.</div>
+              <button class="sm-btn" id="btnStopGateway" onclick="stopHermesGateway()" style="width:100%;padding:8px;font-weight:600;color:#e8a030;border-color:rgba(232,160,48,.3)" data-i18n="settings_btn_stop_gateway">Stop Hermes Agent</button>
+            </div>
             <div class="settings-field" id="shutdownServerBlock" style="margin-top:18px;padding-top:16px;border-top:1px solid var(--border)">
               <label data-i18n="settings_label_shutdown">Stop the Hermes WebUI server</label>
               <div style="font-size:11px;color:var(--muted);margin-bottom:8px" data-i18n="settings_desc_shutdown">Gracefully stops the local WebUI server. Useful if you launched via <code>./ctl.sh start</code> and want to stop without switching to a terminal. You'll need to relaunch the server (<code>./ctl.sh start</code> or the native app) before the WebUI is reachable again.</div>

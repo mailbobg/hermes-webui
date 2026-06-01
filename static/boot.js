@@ -1989,6 +1989,77 @@ async function shutdownServer() {
   try { await api('/api/shutdown', { method: 'POST' }); } catch (_) {}
 }
 
+// ── Agent connection (local vs remote gateway) ───────────────────────────────
+function onAgentConnModeChange() {
+  const sel = document.getElementById('settingsAgentConnMode');
+  const row = document.getElementById('agentConnRemoteRow');
+  if (!sel || !row) return;
+  row.style.display = (sel.value === 'remote') ? 'block' : 'none';
+}
+
+async function loadAgentConnection() {
+  const sel = document.getElementById('settingsAgentConnMode');
+  if (!sel) return;
+  try {
+    const cfg = await api('/api/agent-connection');
+    sel.value = (cfg && cfg.mode === 'remote') ? 'remote' : 'local';
+    const urlField = document.getElementById('settingsAgentConnUrl');
+    if (urlField) urlField.value = (cfg && cfg.gateway_base_url) || 'http://127.0.0.1:8642';
+    const warn = document.getElementById('agentConnEnvWarn');
+    if (warn) warn.style.display = (cfg && cfg.env_override) ? 'block' : 'none';
+    onAgentConnModeChange();
+  } catch (e) {
+    console.warn('[loadAgentConnection]', e);
+  }
+}
+
+async function saveAgentConnection() {
+  const sel = document.getElementById('settingsAgentConnMode');
+  if (!sel) return;
+  const mode = sel.value === 'remote' ? 'remote' : 'local';
+  const payload = { mode };
+  if (mode === 'remote') {
+    const urlField = document.getElementById('settingsAgentConnUrl');
+    payload.gateway_base_url = urlField ? String(urlField.value || '').trim() : '';
+  }
+  const btn = document.getElementById('btnSaveAgentConn');
+  if (btn) btn.disabled = true;
+  try {
+    await api('/api/agent-connection', { method: 'POST', body: JSON.stringify(payload) });
+    showToast(typeof t === 'function' ? t('settings_agent_conn_saved') : 'Saved — takes effect immediately');
+  } catch (e) {
+    showToast((typeof t === 'function' ? t('settings_agent_conn_save_failed') : 'Failed to save agent connection') + ': ' + (e && e.message ? e.message : e));
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+// ── Stop the background Hermes Agent gateway (not the WebUI server) ───────────
+async function stopHermesGateway() {
+  const ok = await showConfirmDialog({
+    title: (typeof t === 'function' ? t('settings_stop_gateway_confirm_title') : 'Stop Hermes Agent'),
+    message: (typeof t === 'function' ? t('settings_stop_gateway_confirm_message') : 'Stop the background Hermes Agent? Messaging platforms and scheduled jobs will stop. The WebUI is not affected.'),
+    confirmLabel: (typeof t === 'function' ? t('settings_stop_gateway_confirm_btn') : 'Stop'),
+    danger: true,
+  });
+  if (!ok) return;
+  const btn = document.getElementById('btnStopGateway');
+  if (btn) btn.disabled = true;
+  try {
+    const res = await api('/api/gateway/stop', { method: 'POST' });
+    if (res && res.ok) {
+      showToast(typeof t === 'function' ? t('settings_stop_gateway_ok') : 'Hermes Agent stopped');
+    } else {
+      const detail = (res && res.detail) ? res.detail : (typeof t === 'function' ? t('settings_stop_gateway_failed') : 'Failed to stop Hermes Agent');
+      showToast((typeof t === 'function' ? t('settings_stop_gateway_failed') : 'Failed to stop Hermes Agent') + ': ' + detail);
+    }
+  } catch (e) {
+    showToast((typeof t === 'function' ? t('settings_stop_gateway_failed') : 'Failed to stop Hermes Agent') + ': ' + (e && e.message ? e.message : e));
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
 function _showServerStopped() {
   var stoppedMsg = (typeof t === 'function' ? t('settings_shutdown_stopped_message') : 'Server stopped. You can close this tab.');
   document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;color:var(--muted);font-family:system-ui,ui-sans-serif;font-size:14px"><p>' + stoppedMsg + '</p></div>';
