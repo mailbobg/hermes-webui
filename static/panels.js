@@ -6459,6 +6459,7 @@ async function loadSettingsPanel(){
     }
     _syncHermesPanelSessionActions();
     if(typeof loadAgentConnection==='function') loadAgentConnection();
+    if(typeof refreshGatewayButtons==='function') refreshGatewayButtons();
     if(typeof loadDashboardSettings==='function') loadDashboardSettings();
     loadProvidersPanel(); // load provider cards in background
     loadPluginsPanel(); // load plugin/hook visibility in background

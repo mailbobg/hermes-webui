@@ -169,7 +169,7 @@ def test_stop_gateway_runs_cli(monkeypatch, tmp_path):
     assert res == {"ok": True, "detail": "gateway stopped"}
     assert captured["cmd"] == ["/usr/bin/hermes", "gateway", "stop"]
     assert captured["env"]["HERMES_HOME"] == str(tmp_path)
-    assert captured["timeout"] == 30
+    assert captured["timeout"] == 60
 
 
 def test_stop_gateway_timeout(monkeypatch, tmp_path):

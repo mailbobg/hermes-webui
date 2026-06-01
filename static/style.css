@@ -5320,3 +5320,9 @@ html{ scroll-behavior:smooth; }
 /* Workspace-root breadcrumb: a home icon instead of a bare "~". */
 .breadcrumb-home{ display:inline-flex; align-items:center; }
 .breadcrumb-home svg{ width:15px; height:15px; vertical-align:middle; }
+
+/* Gateway start/stop buttons: when disabled (action not applicable for the
+   current state) go fully grey/muted instead of just a faded colour. */
+#btnStartGateway:disabled, #btnStopGateway:disabled{
+  color:var(--muted)!important; border-color:var(--border)!important; opacity:.6;
+}

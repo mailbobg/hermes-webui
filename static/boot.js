@@ -2056,8 +2056,24 @@ async function stopHermesGateway() {
   } catch (e) {
     showToast((typeof t === 'function' ? t('settings_stop_gateway_failed') : 'Failed to stop Hermes Agent') + ': ' + (e && e.message ? e.message : e));
   } finally {
-    if (btn) btn.disabled = false;
+    setTimeout(refreshGatewayButtons, 1200);
   }
+}
+
+// Reflect the live gateway state on the Start/Stop buttons: when the agent is
+// running, Start is disabled and Stop is enabled, and vice-versa.
+async function refreshGatewayButtons() {
+  const startBtn = document.getElementById('btnStartGateway');
+  const stopBtn = document.getElementById('btnStopGateway');
+  if (!startBtn && !stopBtn) return;
+  let alive = null;
+  try {
+    const h = await api('/api/health/agent');
+    alive = h ? h.alive : null;
+  } catch (e) { alive = null; }
+  // alive===true → running; false → stopped; null → unknown (leave both enabled).
+  if (startBtn) startBtn.disabled = (alive === true);
+  if (stopBtn) stopBtn.disabled = (alive === false);
 }
 
 async function startHermesGateway() {
@@ -2074,7 +2090,9 @@ async function startHermesGateway() {
   } catch (e) {
     showToast((typeof t === 'function' ? t('settings_start_gateway_failed') : 'Failed to start Hermes Agent') + ': ' + (e && e.message ? e.message : e));
   } finally {
-    if (btn) btn.disabled = false;
+    // Let actual gateway state drive both buttons (start may take a moment to
+    // register, so give it a short beat before reading health).
+    setTimeout(refreshGatewayButtons, 1200);
   }
 }
 
