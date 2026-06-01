@@ -2060,6 +2060,24 @@ async function stopHermesGateway() {
   }
 }
 
+async function startHermesGateway() {
+  const btn = document.getElementById('btnStartGateway');
+  if (btn) { btn.disabled = true; }
+  try {
+    const res = await api('/api/gateway/start', { method: 'POST' });
+    if (res && res.ok) {
+      showToast(typeof t === 'function' ? t('settings_start_gateway_ok') : 'Hermes Agent started');
+    } else {
+      const detail = (res && res.detail) ? res.detail : '';
+      showToast((typeof t === 'function' ? t('settings_start_gateway_failed') : 'Failed to start Hermes Agent') + (detail ? ': ' + detail : ''));
+    }
+  } catch (e) {
+    showToast((typeof t === 'function' ? t('settings_start_gateway_failed') : 'Failed to start Hermes Agent') + ': ' + (e && e.message ? e.message : e));
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
 function _showServerStopped() {
   var stoppedMsg = (typeof t === 'function' ? t('settings_shutdown_stopped_message') : 'Server stopped. You can close this tab.');
   document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;color:var(--muted);font-family:system-ui,ui-sans-serif;font-size:14px"><p>' + stoppedMsg + '</p></div>';

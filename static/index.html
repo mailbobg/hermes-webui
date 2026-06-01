@@ -1300,9 +1300,12 @@
               <button class="sm-btn" id="btnSaveAgentConn" onclick="saveAgentConnection()" style="margin-top:8px;width:100%;padding:8px;font-weight:600" data-i18n="settings_btn_save_agent_conn">Save</button>
             </div>
             <div class="settings-field" id="stopGatewayBlock" style="margin-top:18px;padding-top:16px;border-top:1px solid var(--border)">
-              <label data-i18n="settings_label_stop_gateway">Stop the background Hermes Agent</label>
-              <div style="font-size:11px;color:var(--muted);margin-bottom:8px" data-i18n="settings_desc_stop_gateway">Runs <code>hermes gateway stop</code> to stop the background agent gateway (messaging platforms / scheduled jobs). The WebUI keeps running and stays usable.</div>
-              <button class="sm-btn" id="btnStopGateway" onclick="stopHermesGateway()" style="width:100%;padding:8px;font-weight:600;color:#e8a030;border-color:rgba(232,160,48,.3)" data-i18n="settings_btn_stop_gateway">Stop Hermes Agent</button>
+              <label data-i18n="settings_label_control_gateway">Background Hermes Agent</label>
+              <div style="font-size:11px;color:var(--muted);margin-bottom:8px" data-i18n="settings_desc_control_gateway">Start or stop the background agent gateway (messaging platforms / scheduled jobs). The WebUI keeps running and stays usable either way.</div>
+              <div style="display:flex;gap:8px">
+                <button class="sm-btn" id="btnStartGateway" onclick="startHermesGateway()" style="flex:1;padding:8px;font-weight:600;color:#19a974;border-color:rgba(25,169,116,.3)" data-i18n="settings_btn_start_gateway">Start Hermes Agent</button>
+                <button class="sm-btn" id="btnStopGateway" onclick="stopHermesGateway()" style="flex:1;padding:8px;font-weight:600;color:#e8a030;border-color:rgba(232,160,48,.3)" data-i18n="settings_btn_stop_gateway">Stop Hermes Agent</button>
+              </div>
             </div>
             <div class="settings-field" id="shutdownServerBlock" style="margin-top:18px;padding-top:16px;border-top:1px solid var(--border)">
               <label data-i18n="settings_label_shutdown">Stop the Hermes WebUI server</label>

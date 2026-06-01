@@ -130,11 +130,11 @@ def _resolve_hermes_cli() -> str | None:
     return None
 
 
-def stop_gateway() -> dict:
-    """Run ``hermes gateway stop`` targeting the active profile.
+def _run_gateway_action(action: str) -> dict:
+    """Run ``hermes gateway <action>`` (start/stop) targeting the active profile.
 
-    Stops the background Hermes Agent gateway (messaging platforms / cron). Does
-    NOT affect the WebUI server process. Mirrors ``feishu.restart_gateway()``;
+    Controls the background Hermes Agent gateway (messaging platforms / cron).
+    Does NOT affect the WebUI server process. Mirrors ``feishu.restart_gateway()``;
     never raises for an operational failure — always returns ``{ok, detail}``.
     """
     hermes = _resolve_hermes_cli()
@@ -144,16 +144,26 @@ def stop_gateway() -> dict:
     env = {**os.environ, "HERMES_HOME": str(get_active_hermes_home())}
     try:
         proc = subprocess.run(
-            [hermes, "gateway", "stop"],
+            [hermes, "gateway", action],
             capture_output=True,
             text=True,
-            timeout=30,
+            timeout=60,
             env=env,
         )
     except subprocess.TimeoutExpired:
-        return {"ok": False, "detail": "hermes gateway stop timed out"}
+        return {"ok": False, "detail": f"hermes gateway {action} timed out"}
     except Exception as exc:
         return {"ok": False, "detail": str(exc)}
 
     detail = (proc.stdout or "").strip() or (proc.stderr or "").strip()
     return {"ok": proc.returncode == 0, "detail": detail}
+
+
+def stop_gateway() -> dict:
+    """Stop the background Hermes Agent gateway. WebUI server is unaffected."""
+    return _run_gateway_action("stop")
+
+
+def start_gateway() -> dict:
+    """Start the background Hermes Agent gateway. WebUI server is unaffected."""
+    return _run_gateway_action("start")

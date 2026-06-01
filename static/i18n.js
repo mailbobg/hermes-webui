@@ -884,6 +884,11 @@ const LOCALES = {
     settings_agent_conn_saved: 'Saved — takes effect immediately',
     settings_agent_conn_save_failed: 'Failed to save agent connection',
     // Stop background Hermes Agent gateway
+    settings_label_control_gateway: 'Background Hermes Agent',
+    settings_desc_control_gateway: 'Start or stop the background agent gateway (messaging platforms / scheduled jobs). The WebUI keeps running and stays usable either way.',
+    settings_btn_start_gateway: 'Start Hermes Agent',
+    settings_start_gateway_ok: 'Hermes Agent started',
+    settings_start_gateway_failed: 'Failed to start Hermes Agent',
     settings_label_stop_gateway: 'Stop the background Hermes Agent',
     settings_desc_stop_gateway: 'Runs hermes gateway stop to stop the background agent gateway (messaging platforms / scheduled jobs). The WebUI keeps running and stays usable.',
     settings_btn_stop_gateway: 'Stop Hermes Agent',
@@ -9093,6 +9098,11 @@ const LOCALES = {
     settings_agent_conn_saved: '已保存 — 即时生效',
     settings_agent_conn_save_failed: '保存 Agent 连接失败',
     // Stop background Hermes Agent gateway
+    settings_label_control_gateway: '后台 Hermes Agent',
+    settings_desc_control_gateway: '启动或停止后台 agent gateway(消息平台 / 定时任务)。无论启停,WebUI 都照常运行可用。',
+    settings_btn_start_gateway: '启动 Hermes Agent',
+    settings_start_gateway_ok: 'Agent 已启动',
+    settings_start_gateway_failed: '启动 Hermes Agent 失败',
     settings_label_stop_gateway: '停止后台 Hermes Agent',
     settings_desc_stop_gateway: '运行 hermes gateway stop 停止后台 agent gateway(消息平台 / 定时任务)。WebUI 不受影响,照常可用。',
     settings_btn_stop_gateway: '停止 Hermes Agent',

@@ -5764,6 +5764,10 @@ def handle_post(handler, parsed) -> bool:
         from api.agent_connection import stop_gateway
         return j(handler, stop_gateway())
 
+    if parsed.path == "/api/gateway/start":
+        from api.agent_connection import start_gateway
+        return j(handler, start_gateway())
+
     # ── Platforms: Feishu (飞书 / Lark) credential probe ──
     if parsed.path == "/api/platforms/feishu/validate":
         from api.platforms import feishu
