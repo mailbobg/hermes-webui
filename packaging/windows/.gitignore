@@ -1,4 +1,7 @@
 # Build outputs and cached toolchain — never commit these.
 build/
+build-portable/
 .python-cache/
+.cache-portable/
 *.tar.gz
+*.zip
