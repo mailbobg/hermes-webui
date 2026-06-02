@@ -2069,11 +2069,11 @@ async function refreshGatewayButtons() {
     const h = await api('/api/health/agent');
     alive = h ? h.alive : null;
   } catch (e) { alive = null; }
-  // alive===true → running (only Stop enabled); false → stopped (only Start
-  // enabled); null → unknown (disable BOTH — we can't tell, so don't let the
-  // user fire an action that may not apply). Buttons start disabled in markup
-  // until this resolves, so they are never both clickable.
-  if (startBtn) startBtn.disabled = (alive !== false);
+  // running → only Stop is actionable; stopped OR unknown → only Start. Bias
+  // unknown toward "startable" so a not-yet-ready agent (health still null,
+  // common right after install) leaves Start clickable instead of greying out
+  // BOTH buttons and trapping the user. They are never both enabled at once.
+  if (startBtn) startBtn.disabled = (alive === true);
   if (stopBtn) stopBtn.disabled = (alive !== true);
 }
 
