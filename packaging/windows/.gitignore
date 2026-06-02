@@ -1,0 +1,4 @@
+# Build outputs and cached toolchain — never commit these.
+build/
+.python-cache/
+*.tar.gz
