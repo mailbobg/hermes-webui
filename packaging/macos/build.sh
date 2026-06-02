@@ -167,6 +167,13 @@ fi
 if [ "${DO_SIGN}" = 1 ]; then
   [ -n "${SIGN_IDENTITY}" ] || { echo "SIGN_IDENTITY is required for --sign" >&2; exit 1; }
   local_ent="${HERE}/entitlements.plist"
+  # Strip any __pycache__ that crept into the bundle. Stray .pyc files (e.g. a
+  # foreign Python that imported the bundled WebUI while we were building) break
+  # the code signature as "sealed resource missing/invalid" and get the DMG
+  # rejected by Apple notarization. Clean right before signing so the seal is
+  # computed over a __pycache__-free tree.
+  say "Stripping __pycache__ from bundle before signing…"
+  find "${APP}" -name '__pycache__' -type d -prune -exec rm -rf {} +
   say "Signing nested code (Python + dylibs)…"
   # Sign every Mach-O inside the bundled Python(s) first, then the app. The glob
   # covers both single-arch (python) and universal (python-arm64/python-x86_64).
