@@ -159,7 +159,6 @@ const LOCALES = {
     session_attention_generic_title: 'Waiting for user action',
     untitled: 'Untitled',
     n_messages: (n) => `${n} messages`,
-    load_older_messages: '↑ Scroll up or click to load older messages',
     session_jump_start: 'Start',
     session_jump_start_label: 'Jump to beginning of session',
     session_jump_end: 'End',
@@ -528,9 +527,7 @@ const LOCALES = {
     settings_label_session_jump_buttons: 'Show session jump buttons',
     settings_desc_session_jump_buttons: 'Show floating Start and End buttons while reading long session histories.',
 
-    settings_label_session_endless_scroll: 'Load older messages while scrolling up',
 
-    settings_desc_session_endless_scroll: 'When enabled, older messages load automatically as you scroll upward. When disabled, use the older-messages button.',
 
     settings_label_tab_visibility: 'Sidebar tabs',
     settings_desc_tab_visibility: 'Choose which tabs appear in the sidebar and rail. Chat and Settings are always visible.',
@@ -1658,7 +1655,6 @@ const LOCALES = {
     session_attention_generic_title: 'In attesa di un’azione dell’utente',
     untitled: 'Senza titolo',
     n_messages: (n) => n === 1 ? `${n} messaggio` : `${n} messaggi`,
-    load_older_messages: '↑ Scorri in alto o clicca per caricare i messaggi precedenti',
     session_jump_start: 'Inizio',
     session_jump_start_label: "Vai all'inizio della sessione",
     session_jump_end: 'Fine',
@@ -2027,9 +2023,7 @@ const LOCALES = {
     settings_label_session_jump_buttons: 'Mostra pulsanti salto sessione',
     settings_desc_session_jump_buttons: 'Mostra pulsanti fluttuanti Inizio e Fine durante la lettura di sessioni lunghe.',
 
-    settings_label_session_endless_scroll: 'Carica messaggi precedenti scorrendo in alto',
 
-    settings_desc_session_endless_scroll: 'Se abilitato, i messaggi precedenti si caricano automaticamente scorrendo in alto. Se disabilitato, usa il pulsante messaggi precedenti.',
 
     settings_label_tab_visibility: 'Schede della barra laterale',
     settings_desc_tab_visibility: 'Scegli quali schede mostrare nella barra laterale e nel rail. Chat e Impostazioni sono sempre visibili.',
@@ -3093,7 +3087,6 @@ const LOCALES = {
     session_attention_generic_title: 'ユーザー操作を待っています',
     untitled: '無題',
     n_messages: (n) => `${n} 件のメッセージ`,
-    load_older_messages: '↑ 上にスクロール、またはクリックして過去のメッセージを読み込む',
     session_jump_start: '開始',
     session_jump_start_label: 'セッションの先頭へ移動',
     session_jump_end: '末尾',
@@ -3462,9 +3455,7 @@ const LOCALES = {
     settings_label_session_jump_buttons: 'セッションジャンプボタンを表示',
     settings_desc_session_jump_buttons: '長いセッション履歴を読むときに、浮動表示の「開始」と「末尾」ボタンを表示します。',
 
-    settings_label_session_endless_scroll: '上スクロールで古いメッセージを読み込む',
 
-    settings_desc_session_endless_scroll: '有効にすると、上にスクロールしたとき古いメッセージを自動で読み込みます。無効の場合は古いメッセージボタンを使います。',
 
     settings_label_tab_visibility: 'サイドバータブ',
     settings_desc_tab_visibility: 'サイドバーとレールに表示するタブを選択します。チャットと設定は常に表示されます。',
@@ -4505,7 +4496,6 @@ const LOCALES = {
     approval_responding: 'Отвечаю…',
     untitled: 'Без названия',
     n_messages: (n) => `${n} сообщений`,
-    load_older_messages: '↑ Прокрутите вверх или нажмите, чтобы загрузить ранние сообщения',
     session_jump_start: 'Начало',
     session_jump_start_label: 'Перейти к началу сессии',
     session_jump_end: 'Конец',
@@ -5467,9 +5457,7 @@ const LOCALES = {
     settings_label_session_jump_buttons: 'Показывать кнопки перехода по сессии',
     settings_desc_session_jump_buttons: 'Показывать плавающие кнопки «Начало» и «Конец» при чтении длинных историй сессий.',
 
-    settings_label_session_endless_scroll: 'Загружать старые сообщения при прокрутке вверх',
 
-    settings_desc_session_endless_scroll: 'Если включено, старые сообщения загружаются автоматически при прокрутке вверх. Если выключено, используйте кнопку загрузки старых сообщений.',
 
     settings_label_tab_visibility: 'Вкладки боковой панели',
     settings_desc_tab_visibility: 'Выберите, какие вкладки отображаются на боковой панели и в рейле. Чат и настройки всегда видны.',
@@ -5886,7 +5874,6 @@ const LOCALES = {
     session_attention_generic_title: 'Esperando una acción del usuario',
     untitled: 'Sin título',
     n_messages: (n) => `${n} mensajes`,
-    load_older_messages: '↑ Desplázate hacia arriba o haz clic para cargar mensajes anteriores',
     session_jump_start: 'Inicio',
     session_jump_start_label: 'Saltar al inicio de la sesión',
     session_jump_end: 'Fin',
@@ -6828,9 +6815,7 @@ const LOCALES = {
     settings_label_session_jump_buttons: 'Mostrar botones de salto de sesión',
     settings_desc_session_jump_buttons: 'Muestra botones flotantes de Inicio y Fin al leer historiales de sesión largos.',
 
-    settings_label_session_endless_scroll: 'Cargar mensajes antiguos al desplazarse hacia arriba',
 
-    settings_desc_session_endless_scroll: 'Si está activado, los mensajes antiguos se cargan automáticamente al desplazarte hacia arriba. Si está desactivado, usa el botón de mensajes antiguos.',
 
     settings_label_tab_visibility: 'Pestañas de la barra lateral',
     settings_desc_tab_visibility: 'Elige qué pestañas aparecen en la barra lateral y el rail. Chat y Configuración siempre están visibles.',
@@ -7257,7 +7242,6 @@ const LOCALES = {
     session_attention_generic_title: 'Wartet auf eine Benutzeraktion',
     untitled: 'Unbenannt',
     n_messages: (n) => `${n} Nachrichten`,
-    load_older_messages: '↑ Nach oben scrollen oder klicken, um ältere Nachrichten zu laden',
     session_jump_start: 'Anfang',
     session_jump_start_label: 'Zum Anfang der Sitzung springen',
     session_jump_end: 'Ende',
@@ -7901,9 +7885,7 @@ const LOCALES = {
     settings_label_session_jump_buttons: 'Sitzungs-Sprungtasten anzeigen',
     settings_desc_session_jump_buttons: 'Zeigt beim Lesen langer Sitzungsverläufe schwebende Anfang- und Ende-Tasten an.',
 
-    settings_label_session_endless_scroll: 'Ältere Nachrichten beim Hochscrollen laden',
 
-    settings_desc_session_endless_scroll: 'Wenn aktiviert, werden ältere Nachrichten beim Hochscrollen automatisch geladen. Wenn deaktiviert, nutzt du den Button für ältere Nachrichten.',
 
     settings_label_tab_visibility: 'Seitenleiste-Tabs',
     settings_desc_tab_visibility: 'Wähle, welche Tabs in der Seitenleiste und im Rail angezeigt werden. Chat und Einstellungen sind immer sichtbar.',
@@ -8632,7 +8614,6 @@ const LOCALES = {
     session_attention_generic_title: '等待用户操作',
     untitled: '未命名',
     n_messages: (n) => `${n} 条消息`,
-    load_older_messages: '↑ 向上滚动或点击加载更早的消息',
     session_jump_start: '开头',
     session_jump_start_label: '跳转到会话开头',
     session_jump_end: '结尾',
@@ -9614,9 +9595,7 @@ const LOCALES = {
     settings_label_session_jump_buttons: '显示会话跳转按钮',
     settings_desc_session_jump_buttons: '阅读较长会话历史时显示悬浮的开头和结尾按钮。',
 
-    settings_label_session_endless_scroll: '向上滚动时加载更早的消息',
 
-    settings_desc_session_endless_scroll: '启用后，向上滚动时会自动加载更早的消息。禁用时请使用加载更早消息按钮。',
 
     settings_label_tab_visibility: '侧边栏标签',
     settings_desc_tab_visibility: '选择在侧边栏和导航栏中显示哪些标签。聊天和设置始终可见。',
@@ -10044,7 +10023,6 @@ const LOCALES = {
     clarify_responding: '\u8655\u7406\u4e2d\u2026',
     untitled: '\u672a\u547d\u540d',
     n_messages: (n) => `${n} \u689d\u8a0a\u606f`,
-    load_older_messages: '↑ 向上捲動或點擊以載入較早的訊息',
     session_jump_start: '開頭',
     session_jump_start_label: '跳至會話開頭',
     session_jump_end: '結尾',
@@ -10264,9 +10242,7 @@ const LOCALES = {
     settings_label_session_jump_buttons: '顯示會話跳轉按鈕',
     settings_desc_session_jump_buttons: '閱讀較長會話歷史時顯示浮動的開頭與結尾按鈕。',
 
-    settings_label_session_endless_scroll: '向上捲動時載入較早訊息',
 
-    settings_desc_session_endless_scroll: '啟用後，向上捲動時會自動載入較早訊息。停用時請使用載入較早訊息按鈕。',
 
     settings_label_tab_visibility: '側邊欄標籤',
     settings_desc_tab_visibility: '選擇在側邊欄和導航列中顯示哪些標籤。聊天和設定始終可見。',
@@ -10567,7 +10543,6 @@ const LOCALES = {
     delete_confirm: (name) => `刪除「${name}」？`,
     downloading: (filename) => `正在下載 ${filename}…`,
     n_messages: (n) => `${n} 則訊息`,
-    load_older_messages: '↑ 向上捲動或點擊以載入較早的訊息',
     session_jump_start: '開頭',
     session_jump_start_label: '跳至會話開頭',
     session_jump_end: '結尾',
@@ -11433,7 +11408,6 @@ const LOCALES = {
     session_attention_generic_title: 'Aguardando ação do usuário',
     untitled: 'Sem título',
     n_messages: (n) => `${n} mensagens`,
-    load_older_messages: '↑ Role para cima ou clique para carregar mensagens mais antigas',
     session_jump_start: 'Início',
     session_jump_start_label: 'Ir para o início da sessão',
     session_jump_end: 'Fim',
@@ -11775,9 +11749,7 @@ const LOCALES = {
     settings_label_session_jump_buttons: 'Mostrar botões de salto da sessão',
     settings_desc_session_jump_buttons: 'Mostra botões flutuantes Início e Fim ao ler históricos longos de sessão.',
 
-    settings_label_session_endless_scroll: 'Carregar mensagens antigas ao rolar para cima',
 
-    settings_desc_session_endless_scroll: 'Quando ativado, mensagens antigas carregam automaticamente ao rolar para cima. Quando desativado, use o botão de mensagens antigas.',
 
     settings_label_tab_visibility: 'Abas da barra lateral',
     settings_desc_tab_visibility: 'Escolha quais abas aparecem na barra lateral e no rail. Chat e Configurações estão sempre visíveis.',
@@ -12753,7 +12725,6 @@ const LOCALES = {
     session_attention_generic_title: '사용자 작업을 기다리는 중',
     untitled: '제목 없음',
     n_messages: (n) => `${n}개 메시지`,
-    load_older_messages: '↑ 위로 스크롤하거나 클릭하여 이전 메시지 불러오기',
     session_jump_start: '시작',
     session_jump_start_label: '세션 시작으로 이동',
     session_jump_end: '끝',
@@ -13113,9 +13084,7 @@ const LOCALES = {
     settings_label_session_jump_buttons: '세션 이동 버튼 표시',
     settings_desc_session_jump_buttons: '긴 세션 기록을 읽을 때 떠 있는 시작 및 끝 버튼을 표시합니다.',
 
-    settings_label_session_endless_scroll: '위로 스크롤할 때 이전 메시지 불러오기',
 
-    settings_desc_session_endless_scroll: '활성화하면 위로 스크롤할 때 이전 메시지를 자동으로 불러옵니다. 비활성화하면 이전 메시지 버튼을 사용합니다.',
 
     settings_label_tab_visibility: '사이드바 탭',
     settings_desc_tab_visibility: '사이드바와 레일에 표시할 탭을 선택하세요. 채팅과 설정은 항상 표시됩니다.',
@@ -14193,7 +14162,6 @@ const LOCALES = {
     session_attention_clarify_title: 'En attente de votre réponse',
     session_attention_generic_title: 'En attente d’une action utilisateur',
     untitled: 'Sans titre',
-    load_older_messages: '↑ Faites défiler vers le haut ou cliquez pour charger les anciens messages',
     session_jump_start: 'Commencer',
     session_jump_start_label: 'Aller au début de la session',
     session_jump_end: 'Fin',
@@ -14465,8 +14433,6 @@ const LOCALES = {
     settings_desc_workspace_panel_open: 'Lorsqu\'il est activé, le panneau de l\'espace de travail/navigateur de fichiers s\'ouvre automatiquement à chaque nouvelle session. Vous pouvez toujours le fermer manuellement à tout moment.',
     settings_label_session_jump_buttons: 'Afficher les boutons de saut de session',
     settings_desc_session_jump_buttons: 'Affichez les boutons flottants de début et de fin lors de la lecture de longs historiques de session.',
-    settings_label_session_endless_scroll: 'Charger les anciens messages en faisant défiler vers le haut',
-    settings_desc_session_endless_scroll: 'Lorsqu\'ils sont activés, les anciens messages se chargent automatiquement lorsque vous faites défiler vers le haut. Lorsqu\'il est désactivé, utilisez le bouton des messages plus anciens.',
 
     settings_label_tab_visibility: 'Onglets de la barre latérale',
     settings_desc_tab_visibility: 'Choisissez quels onglets apparaissent dans la barre latérale et le rail. Chat et Paramètres sont toujours visibles.',
@@ -15560,7 +15526,6 @@ const LOCALES = {
     session_attention_generic_title: 'Kullanıcı eylemi bekleniyor',
     untitled: 'İsimsiz',
     n_messages: (n) => `${n}개 메시지`,
-    load_older_messages: '↑ Eski mesajları yüklemek için yukarı kaydırın veya tıklayın',
     session_jump_start: 'Başlangıç',
     session_jump_start_label: 'Oturumun başlangıcına atla',
     session_jump_end: 'Son',
@@ -15918,9 +15883,7 @@ const LOCALES = {
     settings_label_session_jump_buttons: 'Oturum atlama düğmelerini göster',
     settings_desc_session_jump_buttons: 'Uzun oturum geçmişlerini okurken kayan Başlat ve Bitir düğmelerini gösterin.',
 
-    settings_label_session_endless_scroll: 'Yukarı kaydırırken eski mesajları yükle',
 
-    settings_desc_session_endless_scroll: 'Etkinleştirildiğinde, yukarı doğru kaydırdığınızda eski mesajlar otomatik olarak yüklenir. Devre dışı bırakıldığında eski mesajlar düğmesini kullanın.',
 
     settings_label_tab_visibility: 'Kenar çubuğu sekmeleri',
     settings_desc_tab_visibility: 'Kenar çubuğunda ve rayda hangi sekmelerin görüneceğini seçin. Sohbet ve Ayarlar her zaman görünür durumdadır.',

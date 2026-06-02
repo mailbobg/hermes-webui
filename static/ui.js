@@ -322,17 +322,6 @@ function _messageRenderableMessageCount(){
 function _messageHiddenBeforeCount(){
   return Math.max(0,_messageRenderableMessageCount()-_currentMessageRenderWindowSize());
 }
-function _isSessionEndlessScrollEnabled(){
-  return window._sessionEndlessScrollEnabled===true;
-}
-function _wireMessageWindowLoadEarlierButton(){
-  const indicator=$('loadOlderIndicator');
-  if(!indicator) return;
-  indicator.onclick=()=>{
-    if(_messageHiddenBeforeCount()>0) _showEarlierRenderedMessages();
-    else if(typeof _loadOlderMessages==='function') _loadOlderMessages();
-  };
-}
 function _showEarlierRenderedMessages(){
   const container=$('messages');
   const prevScrollH=container?container.scrollHeight:0;
@@ -341,7 +330,12 @@ function _showEarlierRenderedMessages(){
   renderMessages();
   if(container){
     const newScrollH=container.scrollHeight;
+    // Preserve the visible viewport after prepending earlier messages, and
+    // suppress the resulting scroll event so it does not immediately re-trigger
+    // another window expansion — the reader expands one window per upward scroll.
+    _programmaticScroll=true;
     container.scrollTop=prevScrollTop+(newScrollH-prevScrollH);
+    requestAnimationFrame(()=>{ _programmaticScroll=false; });
   }
   _scrollPinned=false;
 }
@@ -2353,12 +2347,14 @@ if(typeof window!=='undefined') window._resetScrollDirectionTracker=_resetScroll
       const showBottomButton=!_scrollPinned && el.scrollHeight-top-el.clientHeight>80;
       if(btn) btn.style.display=showBottomButton?'flex':'none';
       if(typeof _updateSessionStartJumpButton==='function') _updateSessionStartJumpButton();
-      // Prefetch older messages before the reader hits the hard top. Prepending
-      // then preserving scrollTop is seamless only if there is runway left for
-      // the user's continued upward wheel/touch movement.
+      // Reveal earlier transcript content before the reader hits the hard top.
+      // Prepending then preserving scrollTop is seamless only if there is runway
+      // left for the user's continued upward wheel/touch movement. Expand the
+      // in-memory render window first, then page older messages from the server.
       const olderPrefetchPx=Math.max(600,el.clientHeight*1.5);
-      if(_isSessionEndlessScrollEnabled()&&el.scrollTop<olderPrefetchPx && typeof _messagesTruncated!=='undefined' && _messagesTruncated && typeof _loadOlderMessages==='function'){
-        _loadOlderMessages();
+      if(el.scrollTop<olderPrefetchPx){
+        if(_messageHiddenBeforeCount()>0) _showEarlierRenderedMessages();
+        else if(typeof _messagesTruncated!=='undefined' && _messagesTruncated && typeof _loadOlderMessages==='function') _loadOlderMessages();
       }
     });
   });
@@ -6311,7 +6307,6 @@ function renderMessages(options){
     if(cached&&cached.msgCount===msgCount&&cached.renderWindowSize===renderWindowSize&&cached.signature===renderSignature){
       inner.innerHTML=cached.html;
       _sessionHtmlCacheSid=sid;
-      _wireMessageWindowLoadEarlierButton();
       if(typeof _applySessionNavigationPrefs==='function') _applySessionNavigationPrefs();
       _scrollAfterMessageRender(preserveScroll, scrollSnapshot);
       requestAnimationFrame(()=>postProcessRenderedMessages(inner));
@@ -6385,31 +6380,14 @@ function renderMessages(options){
     if(_isPreservedCompressionTaskListMessage(m)){preservedCompressionRawIdxs.push(rawIdx);rawIdx++;continue;}
     rawIdx++;
   }
-  // Show a top affordance when earlier transcript content exists either in
-  // memory (DOM windowing) or on the server (paginated session fetch).
-  // Prefer expanding the local render window first so a fully loaded long
-  // session can reduce DOM nodes without losing in-memory transcript data.
+  // Earlier transcript content (in-memory DOM windowing or server-paginated
+  // pages) is revealed automatically as the reader scrolls upward — see the
+  // #messages scroll handler. The local render window is expanded first so a
+  // fully loaded long session can shed DOM nodes without losing transcript data.
   const windowStart=Math.max(0, visWithIdx.length-renderWindowSize);
-  const hiddenBeforeCount=windowStart;
   const renderVisWithIdx=visWithIdx.slice(windowStart);
   const firstRenderedRawIdx=renderVisWithIdx.length?renderVisWithIdx[0].rawIdx:Infinity;
-  const hasServerOlder=!!(typeof _messagesTruncated!=='undefined' && _messagesTruncated && S.messages.length>0);
   if(typeof _applySessionNavigationPrefs==='function') _applySessionNavigationPrefs();
-  if(hiddenBeforeCount>0 || hasServerOlder){
-    const indicator=document.createElement('button');
-    indicator.type='button';
-    indicator.id='loadOlderIndicator';
-    indicator.className='load-older-indicator message-window-load-earlier';
-    indicator.textContent=hiddenBeforeCount>0
-      ? `Load earlier messages (${hiddenBeforeCount} hidden)`
-      : (typeof t==='function'?t('load_older_messages'):'Load earlier messages');
-    indicator.onclick=()=>{
-      if(hiddenBeforeCount>0) _showEarlierRenderedMessages();
-      else if(typeof _loadOlderMessages==='function') _loadOlderMessages();
-    };
-    inner.appendChild(indicator);
-    _wireMessageWindowLoadEarlierButton();
-  }
   let lastUserRawIdx=-1;
   for(let i=visWithIdx.length-1;i>=0;i--){
     if(visWithIdx[i].m&&visWithIdx[i].m.role==='user'){
@@ -8473,6 +8451,49 @@ function renderFileTree(){
     return;
   }
   _renderTreeItems(box, visibleEntries, 0);
+}
+
+// One-click collapse/expand of the whole workspace file tree.
+function collapseAllWorkspaceDirs(){
+  if(S._expandedDirs) S._expandedDirs.clear();
+  if(typeof _saveExpandedDirs==='function') _saveExpandedDirs();
+  renderFileTree();
+}
+let _expandingAllDirs=false;
+async function expandAllWorkspaceDirs(){
+  if(_expandingAllDirs) return;
+  if(!S.session||!S.session.session_id) return;
+  if(!S._expandedDirs) S._expandedDirs=new Set();
+  _expandingAllDirs=true;
+  const btn=$('btnExpandAllDirs'); if(btn) btn.disabled=true;
+  // The tree is lazy-loaded, so walk every directory and fetch its children on
+  // demand. Capped so a huge workspace can't fire thousands of /api/list calls.
+  const MAX_DIRS=500;
+  let count=0, truncated=false;
+  async function walk(entries){
+    for(const item of _visibleWorkspaceEntries(entries||[])){
+      if(item.type!=='dir') continue;
+      if(count>=MAX_DIRS){ truncated=true; return; }
+      S._expandedDirs.add(item.path); count++;
+      if(!S._dirCache[item.path]){
+        try{
+          const data=await api(`/api/list?session_id=${encodeURIComponent(S.session.session_id)}&path=${encodeURIComponent(item.path)}`);
+          S._dirCache[item.path]=data.entries||[];
+        }catch(e){ S._dirCache[item.path]=[]; }
+      }
+      await walk(S._dirCache[item.path]);
+      if(truncated) return;
+    }
+  }
+  try{
+    await walk(S.entries);
+    if(typeof _saveExpandedDirs==='function') _saveExpandedDirs();
+    renderFileTree();
+    if(truncated&&typeof showToast==='function') showToast('Expanded the first '+MAX_DIRS+' folders');
+  }finally{
+    _expandingAllDirs=false;
+    if(btn) btn.disabled=false;
+  }
 }
 
 function _renderTreeItems(container, entries, depth){

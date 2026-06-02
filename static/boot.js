@@ -1609,7 +1609,7 @@ function applyBotName(){
   const topbarTitle=$('topbarTitle');
   if(topbarTitle && (!S.session)) topbarTitle.textContent=name;
   const msg=$('msg');
-  if(msg) msg.placeholder='Message '+name+'\u2026';
+  if(msg) msg.placeholder='';
 }
 
 (async()=>{
@@ -1645,7 +1645,6 @@ function applyBotName(){
       jsonChars:parseInt(s.inflight_state_max_json_chars||1500000,10)||1500000,
     };
     window._busyInputMode=(s.busy_input_mode||'queue');
-    window._sessionEndlessScrollEnabled=!!s.session_endless_scroll;
     window._botName=s.bot_name||'Hermes';
     if(s.default_model_provider) window._activeProvider=s.default_model_provider;
     if(s.default_model){
@@ -1735,7 +1734,6 @@ function applyBotName(){
     window._sidebarDensity='compact';
     window._pinnedSessionsLimit=3;
     window._busyInputMode='queue';
-    window._sessionEndlessScrollEnabled=false;
     window._botName='Hermes';
     _bootSettings={check_for_updates:false};
     if(typeof setLocale==='function'){
@@ -1750,7 +1748,7 @@ function applyBotName(){
   // Non-blocking update check (fire-and-forget, once per tab session)
   // ?test_updates=1 in URL forces banner display for testing (bypasses sessionStorage guards)
   const _testUpdates=new URLSearchParams(location.search).get('test_updates')==='1';
-  if(_testUpdates||(_bootSettings.check_for_updates!==false&&!sessionStorage.getItem('hermes-update-checked')&&!sessionStorage.getItem('hermes-update-dismissed'))){
+  if(_testUpdates||(_bootSettings.check_for_updates===true&&!sessionStorage.getItem('hermes-update-checked')&&!sessionStorage.getItem('hermes-update-dismissed'))){
     const _checkUrl='api/updates/check'+(_testUpdates?'?simulate=1':'');
     api(_checkUrl).then(d=>{if(!_testUpdates)sessionStorage.setItem('hermes-update-checked','1');if((d.webui&&d.webui.behind>0)||(d.agent&&d.agent.behind>0))_showUpdateBanner(d);}).catch(()=>{});
   }
@@ -2071,9 +2069,12 @@ async function refreshGatewayButtons() {
     const h = await api('/api/health/agent');
     alive = h ? h.alive : null;
   } catch (e) { alive = null; }
-  // alive===true → running; false → stopped; null → unknown (leave both enabled).
-  if (startBtn) startBtn.disabled = (alive === true);
-  if (stopBtn) stopBtn.disabled = (alive === false);
+  // alive===true → running (only Stop enabled); false → stopped (only Start
+  // enabled); null → unknown (disable BOTH — we can't tell, so don't let the
+  // user fire an action that may not apply). Buttons start disabled in markup
+  // until this resolves, so they are never both clickable.
+  if (startBtn) startBtn.disabled = (alive !== false);
+  if (stopBtn) stopBtn.disabled = (alive !== true);
 }
 
 async function startHermesGateway() {

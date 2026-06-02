@@ -5930,7 +5930,6 @@ function _appearancePayloadFromUi(){
     skin: ($('settingsSkin')||{}).value || localStorage.getItem('hermes-skin') || 'default',
     font_size: ($('settingsFontSize')||{}).value || localStorage.getItem('hermes-font-size') || 'default',
     session_jump_buttons: !!($('settingsSessionJumpButtons')||{}).checked,
-    session_endless_scroll: !!($('settingsSessionEndlessScroll')||{}).checked,
     hidden_tabs: _getHiddenTabs(),
   };
 }
@@ -5983,7 +5982,6 @@ async function _autosaveAppearanceSettings(payload){
       window._sessionJumpButtonsEnabled=!!saved.session_jump_buttons;
       if(typeof _applySessionNavigationPrefs==='function') _applySessionNavigationPrefs();
     }
-    window._sessionEndlessScrollEnabled=!!(saved&&saved.session_endless_scroll);
     _setAppearanceAutosaveStatus('saved');
   }catch(e){
     console.warn('[settings] appearance autosave failed', e);
@@ -6189,15 +6187,6 @@ async function loadSettingsPanel(){
         else if(!open&&_workspacePanelMode!=='closed') toggleWorkspacePanel(false);
       };
     }
-    const endlessScrollCb=$('settingsSessionEndlessScroll');
-    if(endlessScrollCb){
-      endlessScrollCb.checked=!!settings.session_endless_scroll;
-      window._sessionEndlessScrollEnabled=endlessScrollCb.checked;
-      endlessScrollCb.onchange=function(){
-        window._sessionEndlessScrollEnabled=this.checked;
-        _scheduleAppearanceAutosave();
-      };
-    }
     // Tab visibility chips (dynamically populated from DOM)
     var hiddenTabs=[];
     if(Array.isArray(settings.hidden_tabs)){
@@ -6321,7 +6310,7 @@ async function loadSettingsPanel(){
     const syncCb=$('settingsSyncInsights');
     if(syncCb){syncCb.checked=!!settings.sync_to_insights;syncCb.addEventListener('change',_schedulePreferencesAutosave,{once:false});}
     const updateCb=$('settingsCheckUpdates');
-    if(updateCb){updateCb.checked=settings.check_for_updates!==false;updateCb.addEventListener('change',_schedulePreferencesAutosave,{once:false});}
+    if(updateCb){updateCb.checked=settings.check_for_updates===true;updateCb.addEventListener('change',_schedulePreferencesAutosave,{once:false});}
     const ignoreAgentUpdatesCb=$('settingsIgnoreAgentUpdates');
     if(ignoreAgentUpdatesCb){ignoreAgentUpdatesCb.checked=!!settings.ignore_agent_updates;ignoreAgentUpdatesCb.addEventListener('change',_schedulePreferencesAutosave,{once:false});}
     const whatsNewSummaryCb=$('settingsWhatsNewSummary');
@@ -8325,7 +8314,6 @@ function _applySavedSettingsUi(saved, body, opts){
   if(typeof _applySessionNavigationPrefs==='function') _applySessionNavigationPrefs();
   window._sidebarDensity=sidebarDensity==='detailed'?'detailed':'compact';
   window._busyInputMode=body.busy_input_mode||'queue';
-  window._sessionEndlessScrollEnabled=!!body.session_endless_scroll;
   window._botName=body.bot_name||'Hermes';
   if(typeof applyBotName==='function') applyBotName();
   if(typeof setLocale==='function') setLocale(language);
@@ -8654,7 +8642,6 @@ async function saveSettings(andClose){
   body.skin=skin;
   body.font_size=fontSize;
   body.session_jump_buttons=!!($('settingsSessionJumpButtons')||{}).checked;
-  body.session_endless_scroll=!!($('settingsSessionEndlessScroll')||{}).checked;
   body.language=language;
   body.show_token_usage=showTokenUsage;
   body.show_quota_chip=showQuotaChip===true;

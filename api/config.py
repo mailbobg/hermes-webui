@@ -4814,14 +4814,13 @@ _SETTINGS_DEFAULTS = {
     "show_cli_sessions": False,  # merge CLI sessions from state.db into the sidebar
     "show_previous_messaging_sessions": False,  # show older Telegram/Discord/etc. reset segments
     "sync_to_insights": False,  # mirror WebUI token usage to state.db for /insights
-    "check_for_updates": True,  # check if webui/agent repos are behind upstream
+    "check_for_updates": False,  # check if webui/agent repos are behind upstream (default off)
     "ignore_agent_updates": False,  # keep WebUI update notices but suppress Agent update checks
     "whats_new_summary_enabled": False,  # show an LLM-written What's New summary before diff links
     "theme": "dark",  # light | dark | system
     "skin": "default",  # accent color skin: default | ares | mono | slate | poseidon | sisyphus | charizard | sienna | catppuccin | nous
     "font_size": "default",  # small | default | large | xlarge
     "session_jump_buttons": False,  # show Start/End transcript jump pills
-    "session_endless_scroll": False,  # auto-load older transcript pages while scrolling upward
     "pinned_sessions_limit": 3,  # maximum active pinned sessions shown in the sidebar
     "inflight_state_max_sessions": 8,  # max active-stream recovery snapshots kept in browser localStorage
     "inflight_state_max_messages": 24,  # max recent messages kept per recovery snapshot
@@ -4984,7 +4983,6 @@ _SETTINGS_BOOL_KEYS = {
     "simplified_tool_calling",
     "api_redact_enabled",
     "session_jump_buttons",
-    "session_endless_scroll",
 }
 # Language codes are validated as short alphanumeric BCP-47-like tags (e.g. 'en', 'zh', 'fr')
 _SETTINGS_LANG_RE = __import__("re").compile(r"^[a-zA-Z]{2,10}(-[a-zA-Z0-9]{2,8})?$")
