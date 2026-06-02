@@ -112,6 +112,8 @@ rsync -a --delete \
   --exclude '.git' --exclude 'node_modules' --exclude '*.venv' --exclude 'venv' \
   --exclude '__pycache__' --exclude 'packaging/macos/build' \
   --exclude 'packaging/macos/.python-cache' \
+  --exclude 'packaging/windows/build-portable' \
+  --exclude 'packaging/windows/.cache-portable' \
   "${REPO_ROOT}/" "${APP}/Contents/Resources/webui/"
 
 say "Compiling Swift shell (${ARCHES})"
