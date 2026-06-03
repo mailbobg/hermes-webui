@@ -45,10 +45,13 @@ PTHEOF
 mkdir -p "$STAGE/python/Lib/site-packages"
 
 echo "==> Cross-installing Windows wheels (win_amd64, cp312)"
-# WebUI deps (requirements.txt) + agent core deps (hermes-agent pyproject).
-# deepseek needs no extra — it speaks the OpenAI-compatible API via `openai`.
-DEPS=(
-  pyyaml cryptography qrcode pillow
+# WebUI deps come from requirements.txt — single source of truth, shared with
+# build.ps1 / macos build.sh, so they can't drift. Agent core deps are listed
+# explicitly because a --platform cross-install can't resolve them from the
+# agent's local source tree; keep this in sync with hermes-agent's
+# pyproject.toml [dependencies]. deepseek needs no extra — it speaks the
+# OpenAI-compatible API via `openai`.
+AGENT_DEPS=(
   openai python-dotenv fire "httpx[socks]" rich tenacity ruamel.yaml
   requests jinja2 pydantic prompt_toolkit croniter "PyJWT[crypto]" tzdata psutil
 )
@@ -56,7 +59,7 @@ DEPS=(
   --target "$STAGE/python/Lib/site-packages" \
   --platform win_amd64 --python-version 312 --implementation cp --abi cp312 \
   --only-binary=:all: --upgrade \
-  "${DEPS[@]}"
+  -r "$REPO_ROOT/requirements.txt" "${AGENT_DEPS[@]}"
 
 echo "==> Copying WebUI + agent sources"
 rsync -a --delete \

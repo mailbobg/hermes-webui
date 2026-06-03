@@ -68,9 +68,16 @@ int main(void) {
     if (job) AssignProcessToJobObject(job, pi.hProcess);
     ResumeThread(pi.hThread);
 
+    /* Honor HERMES_WEBUI_PORT (default 8787), same as the WebUI/server reads it,
+     * so the launched URL never drifts from the actual bind port. */
+    char port[16] = "8787";
+    GetEnvironmentVariableA("HERMES_WEBUI_PORT", port, sizeof(port));
+    char url[64];
+    snprintf(url, sizeof(url), "http://127.0.0.1:%s/", port);
+
     Sleep(4000);
-    ShellExecuteA(NULL, "open", "http://127.0.0.1:8787/", NULL, NULL, SW_SHOWNORMAL);
-    printf("Hermes is running at http://127.0.0.1:8787/\n");
+    ShellExecuteA(NULL, "open", url, NULL, NULL, SW_SHOWNORMAL);
+    printf("Hermes is running at %s\n", url);
     printf("Close this window to stop Hermes.\n");
     fflush(stdout);
 

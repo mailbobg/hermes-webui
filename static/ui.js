@@ -335,7 +335,10 @@ function _showEarlierRenderedMessages(){
     // another window expansion — the reader expands one window per upward scroll.
     _programmaticScroll=true;
     container.scrollTop=prevScrollTop+(newScrollH-prevScrollH);
-    requestAnimationFrame(()=>{ _programmaticScroll=false; });
+    // Release the guard the same way the #messages scroll handler does — defer
+    // past the next paint AND a macrotask (see the _programmaticScroll note) so
+    // a mid-momentum upward scroll isn't swallowed or misread as "at bottom".
+    requestAnimationFrame(()=>{ setTimeout(()=>{ _programmaticScroll=false; },0); });
   }
   _scrollPinned=false;
 }
@@ -8470,17 +8473,25 @@ async function expandAllWorkspaceDirs(){
   // demand. Capped so a huge workspace can't fire thousands of /api/list calls.
   const MAX_DIRS=500;
   let count=0, truncated=false;
+  // Fetch each level's directories concurrently (siblings are independent),
+  // then recurse — turns strictly-serial N*RTT fetches into ~depth*RTT. The
+  // MAX_DIRS cap still bounds total work; cached dirs skip the fetch.
   async function walk(entries){
+    const dirs=[];
     for(const item of _visibleWorkspaceEntries(entries||[])){
       if(item.type!=='dir') continue;
-      if(count>=MAX_DIRS){ truncated=true; return; }
+      if(count>=MAX_DIRS){ truncated=true; break; }
       S._expandedDirs.add(item.path); count++;
-      if(!S._dirCache[item.path]){
-        try{
-          const data=await api(`/api/list?session_id=${encodeURIComponent(S.session.session_id)}&path=${encodeURIComponent(item.path)}`);
-          S._dirCache[item.path]=data.entries||[];
-        }catch(e){ S._dirCache[item.path]=[]; }
-      }
+      dirs.push(item);
+    }
+    await Promise.all(dirs.map(async item=>{
+      if(S._dirCache[item.path]) return;
+      try{
+        const data=await api(`/api/list?session_id=${encodeURIComponent(S.session.session_id)}&path=${encodeURIComponent(item.path)}`);
+        S._dirCache[item.path]=data.entries||[];
+      }catch(e){ S._dirCache[item.path]=[]; }
+    }));
+    for(const item of dirs){
       await walk(S._dirCache[item.path]);
       if(truncated) return;
     }
